@@ -21,3 +21,27 @@
 # Keep folder 3_output and all its contents
 !3_output/
 !3_output/**
+
+# Ignore everything
+*
+
+# Keep these specific files
+!.gitignore
+!makefile.mak
+!README.md
+
+# Keep folder 0_data but not its contents
+!0_data/
+!0_data/.gitkeep
+
+# Keep folder 1_code and its contents
+!1_code/
+!1_code/**
+
+# Keep folder 2_process but not its contents
+!2_process/
+!2_process/.gitkeep
+
+# Keep folder 3_output and all its contents
+!3_output/
+!3_output/**
