@@ -4,7 +4,7 @@
 # Paths (insert your local paths or environmental variable)
 STATA = "C:\Program Files\Stata18\StataSE-64.exe"
 RSCRIPT = "C:\Program Files\R\R-4.5.1\bin\Rscript.exe" 
-QUARTO  = "C:\Program Files\Quarto\bin\quarto.exe"
+QUARTO  = "C:\Users\Victor van Pelt\AppData\Local\Programs\Quarto\bin\quarto.exe"
 
 # code variables
 DOFILE = 1_code\code.do
