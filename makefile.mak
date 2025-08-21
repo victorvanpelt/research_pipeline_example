@@ -25,7 +25,7 @@ r:
 
 # Quarto code. Run with "make quarto." Immediately removes quarto.html after running and moves code.pdf to 3_output
 quarto:
-	$(RSCRIPT) --vanilla --quiet "$(RFILE)" >NUL 2>&1
+	"$(RSCRIPT)" --vanilla --quiet "$(RFILE)" >NUL 2>&1
 	"$(QUARTO)" render "$(QMD)" --execute --embed-resources
 	@cmd /c "if exist "1_code\code.pdf" move "1_code\code.pdf" "3_output\code.pdf"
 
