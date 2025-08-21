@@ -2,9 +2,9 @@
 .DEFAULT_GOAL := run
 
 # Paths (insert your local paths or environmental variable)
-STATA = "C:\Program Files\Stata18\StataSE-64.exe"
-RSCRIPT = "C:\Program Files\R\R-4.5.1\bin\Rscript.exe" 
-QUARTO  = "C:\Users\Victor van Pelt\AppData\Local\Programs\Quarto\bin\quarto.exe"
+STATA   := $(STATA)
+RSCRIPT := $(RSCRIPT)
+QUARTO  := $(QUARTO)
 
 # code variables
 DOFILE = 1_code\code.do
@@ -16,17 +16,17 @@ run: do
 
 # Stata code. Run with "make do". Last line removes the log file.
 do: $(DOFILE)
-	$(STATA) /e /q do $(DOFILE) > NUL 2>&1
+	"$(STATA)" /e /q do $(DOFILE) > NUL 2>&1
 	@cmd /c "if exist "*.log"  del /q /f "*.log" 
 
 # R code. Run with "make r"
 r:
-	$(RSCRIPT) --vanilla --quiet "$(RFILE)" >NUL 2>&1
+	"$(RSCRIPT)" --vanilla --quiet "$(RFILE)" >NUL 2>&1
 
 # Quarto code. Run with "make quarto." Immediately removes quarto.html after running and moves code.pdf to 3_output
 quarto:
 	$(RSCRIPT) --vanilla --quiet "$(RFILE)" >NUL 2>&1
-	$(QUARTO) render "$(QMD)" --execute --embed-resources
+	"$(QUARTO)" render "$(QMD)" --execute --embed-resources
 	@cmd /c "if exist "1_code\code.pdf" move "1_code\code.pdf" "3_output\code.pdf"
 
 # housekeeping to remove stuck logfiles, quarto files, and clear process and output folders. Run with "make clean"
