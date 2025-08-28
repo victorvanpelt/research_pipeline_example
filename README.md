@@ -5,7 +5,7 @@
  It has the following folders:
  - 0_data: stores the raw data, but does not share it in the repository.
  - 1_code: stores the code files which are shared in the repository.  
- - 2_ process: stores temporary output/ passing output between code. Also, does not share it in the repository using a gitignore file  
+ - 2_process: stores temporary output/ passing output between code. Also, does not share it in the repository using a gitignore file  
  - 3_output: contains output such as tables and figures  
 
  There are other folders you can consider adding:
