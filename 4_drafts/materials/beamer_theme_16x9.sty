@@ -1,0 +1,183 @@
+
+%% BEAMER THEME TRR266
+\mode<presentation>
+
+\RequirePackage{tikz}
+	\usetikzlibrary{calc}						%teaches tikz to calculate coordinates
+	%\usetikzlibrary{matrix}						%nice matrices
+	\usetikzlibrary{positioning}				%relative positioning of nodes
+\RequirePackage{etoolbox}
+\RequirePackage{cmbright}
+\RequirePackage{kvoptions}
+%\RequirePackage{xparse}
+
+\usepackage{ifxetex}
+\ifxetex
+  \usepackage{fontspec}
+  \setsansfont{HelveticaNeue}[Path = ./materials/font/,  % Path to the directory containing the font files
+                         Extension = .ttf,  % Extension of the font files
+                         UprightFont = *-Roman,  % Name of the regular font file
+                         BoldFont = *-Bold,  % Name of the bold font file
+                         ItalicFont = *-Italic,  % Name of the italic font file
+                         BoldItalicFont = *-BoldItalic]  % Name of the bold italic font file
+  \defaultfontfeatures{Ligatures=TeX} % To support LaTeX quoting style
+\else
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\fi
+
+
+% Options-------------------------------------------------------------------------------------------
+
+
+% Logos---------------------------------------------------------------------------------------------
+
+\newdimen\logosizesmall
+\logosizesmall=6mm
+
+
+%\pgfdeclareimage[height=\logosizesmall]{upb}{UPBLog}
+
+
+% Settings = including color, inner, and outer theme
+
+%% COLOR THEME
+\mode<presentation>
+
+
+% Definitions
+% colors
+\definecolor{whu_blue}{RGB}{5,70,150}
+\definecolor{whu_lightblue}{RGB}{0,165,220}
+\definecolor{whu_silvergray}{RGB}{230,235,240}
+\definecolor{whu_antri}{RGB}{80,84,89}
+
+% Settings
+
+% Settings
+% Title
+\setbeamercolor*{title}{fg=whu_blue}
+\setbeamercolor*{subtitle}{fg=whu_blue}
+\setbeamercolor*{title page header}{fg=whu_blue}
+\setbeamercolor*{author}{fg=whu_blue}
+\setbeamercolor*{institute}{fg=white}
+\setbeamercolor*{date}{fg=white}
+
+
+\setbeamercolor*{item}{fg=whu_lightblue}
+\setbeamercolor*{normal text}{fg=black}
+\setbeamercolor*{itemize item}{fg=whu_blue}
+\setbeamercolor*{itemize subitem}{parent=itemize item}
+\setbeamercolor*{itemize subsubitem}{parent=itemize item}
+\setbeamercolor*{enumerate subitem}{parent=itemize item}
+\setbeamercolor*{enumerate item}{parent=itemize item}
+\setbeamercolor*{description item}{parent=itemize item}
+\setbeamercolor*{section number projected}{fg=whu_blue}
+\setbeamercolor*{section in toc}{fg=whu_blue}
+\setbeamercolor*{section title}{fg=whu_blue}
+\setbeamercolor*{section in head/foot}{fg=whu_blue}
+\setbeamercolor*{frametitle}{fg=whu_blue}
+\setbeamercolor*{page number in head/foot}{fg=whu_blue}
+\setbeamercolor*{section in toc}{fg=whu_blue}
+\setbeamercolor*{block title}{fg=whu_blue}
+\setbeamercolor*{block body}{fg=whu_blue!30}
+
+\hypersetup{colorlinks=true,urlcolor=whu_lightblue,linkcolor=whu_lightblue}
+
+% Framed blocks
+\setbeamercolor*{block title}{fg=whu_blue, bg=white}
+\setbeamercolor*{block body}{fg=black, bg=white}
+
+% Filled blocks
+%\setbeamercolor*{block title}{fg=whu_blue, bg=whu_lightblue!50}
+%\setbeamercolor*{block body}{fg=black, bg=block title.bg}
+
+\mode
+<all>
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{blocks}[rounded][shadow=true]
+
+\setbeamertemplate{footline}[page number]{}
+
+%gets rid of navigation symbols
+\setbeamertemplate{navigation symbols}{}
+\mode<all>
+
+
+%% INNER THEME
+\mode<presentation>
+
+\setbeamertemplate{background}{
+  \begin{tikzpicture}
+  \useasboundingbox (0,0) rectangle(\the\paperwidth,\the\paperheight);
+  \fill[color=white] (0,2) rectangle (\the\paperwidth,\the\paperheight);
+  \fill[color=whu_blue!60] (0,0) rectangle(1.5, 1.9);
+  \fill[color=whu_blue] (1.6,0) rectangle(\the\paperwidth, 1.9);
+  \ifnum\thepage>1\relax%
+   \fill[white,opacity=1] (0,0) rectangle(\the\paperwidth,\the\paperheight);
+   \fi
+  \end{tikzpicture}
+}
+
+
+
+
+% Title page
+\defbeamertemplate*{title page}{whu266}[1][]
+{
+  \vskip.5cm
+  \includegraphics[keepaspectratio, height=1.5cm]{materials/whu_logo.png}
+  \vskip1.5cm
+    \begin{beamercolorbox}[wd=12cm,leftskip=0.6cm,#1]{title page header}
+      \usebeamerfont{title}\inserttitle\par%
+      \usebeamerfont{subtitle}\insertsubtitle\par%
+    \end{beamercolorbox}
+    \vskip1.5cm
+    \begin{beamercolorbox}[wd=12cm,leftskip=0.6cm,sep=1pt,#1]{author}
+      \usebeamerfont{author}\insertauthor%
+    \end{beamercolorbox}
+     \vskip0.95cm
+    \begin{beamercolorbox}[wd=14cm,leftskip=1cm,#1]{institute}
+      \usebeamerfont{author}\insertinstitute%
+    \end{beamercolorbox}
+     \vskip.1cm
+    \begin{beamercolorbox}[wd=12cm,leftskip=1cm,#1]{date}
+      \usebeamerfont{author}\insertdate%
+    \end{beamercolorbox}
+  \vfil
+
+}
+
+% Items
+\setbeamertemplate{items}[square]
+\setbeamertemplate{sections/subsections in toc}[square]
+
+\mode
+<all>
+
+%% OUTER THEME
+\mode<presentation>
+
+% Frame title
+\defbeamertemplate*{frametitle}{whu266}[1][]
+{
+\vskip1cm%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=0.5cm]{frametitle}
+  \begin{tikzpicture}
+  \useasboundingbox[fill=white](0,0) rectangle(\the\paperwidth,0.5);
+  \fill[whu_blue!60] (0,0) rectangle(1.5,1.2);
+  \fill[whu_blue] (1.6,0) rectangle(\the\paperwidth,1.2);
+  % \fill[whu_blue] (2.1,0) rectangle(\the\paperwidth,1.2);  
+   \ifx\insertframesubtitle\@empty%
+      {\node[anchor=west, white,font=\large] at (1.7,0.6){\insertframetitle};}
+      \else%
+      {\node[anchor= west, white,font=\large] at (1.7,0.6){\insertframetitle};%
+       \node[anchor= west, white,font=\small] at (1.7,0.6){\insertframesubtitle};}%
+      \fi
+  \end{tikzpicture}
+  \end{beamercolorbox}
+}
+
+\mode<all>
+

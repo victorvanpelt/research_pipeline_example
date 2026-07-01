@@ -1,0 +1,55 @@
+---
+title: "Presentation Example"
+author: Victor van Pelt
+email: victor.vanpelt@whu.edu
+institute: "WHU – Otto Beisheim School of Management"
+date: today
+date-format: long
+pdf-engine: xelatex   # xelatex is needed for the custom fonts; pdflatex rasters them
+format:
+  beamer:
+    slide_level: 3
+classoption: "aspectratio=169"
+bibliography: "references.bib"
+header-includes:
+# This uses a beamer theme edited for WHU. Be my guest to use and change it,
+# or swap in a standard theme (e.g. format: beamer: theme: Madrid).
+- \input{materials/beamer_theme_16x9.sty}
+- \usepackage{booktabs}
+- \usepackage{wrapfig}
+- \usepackage{graphicx}
+- \usepackage{subcaption}
+---
+
+## Import table
+
+```{=tex}
+
+\input{../3_output/table_1.tex}
+
+```
+
+## Summary
+
+-   We study whether generative AI use is associated with (scaled) earnings.
+-   We regress scaled earnings on a generative AI indicator with heteroskedasticity-robust standard errors.
+-   We find a positive and statistically significant association (see Table 1).
+-   The estimate, the table, and the paper all update automatically when the underlying data change.
+
+## Thank you!
+
+```{=tex}
+\begin{wrapfigure}{r}{0.37\textwidth}
+  \vspace{-0.5cm}
+  \includegraphics[width=0.41\textwidth]{"materials/profile.jpg"}
+\end{wrapfigure}
+```
+Dr. Victor van Pelt\
+Assistant Professor of Accounting\
+Finance and Accounting Group\
+WHU – Otto Beisheim School of Management
+
+Campus Vallendar, Burgplatz 2, 56179 Vallendar, Germany\
+Tel.: +49 (0)261 6509 483\
+[Victor.vanPelt\@whu.edu](mailto:Victor.vanPelt@whu.edu)\
+<https://www.victorvanpelt.com>

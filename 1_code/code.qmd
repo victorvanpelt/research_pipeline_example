@@ -1,63 +1,64 @@
 ---
-title: "Quarto Presentation Example"
+title: "Quarto Example: A Report Built at Render Time"
 author: "Victor van Pelt"
 format:
   beamer:
     theme: Madrid
-    fontsize: 9pt    
+    fontsize: 9pt
 ---
 
 ```{r}
-# Use CRAN mirror (needed when running via Rscript / make)
+#| include: false
+
+# Use CRAN mirror (needed when running via Rscript / make / quarto)
 options(repos = c(CRAN = "https://cloud.r-project.org"))
 
-# If we're at the project root, step into 1_code; otherwise, do nothing.
-if (dir.exists(file.path(getwd(), "1_code"))) {
-  setwd(file.path(getwd(), "1_code"))
-}
+# Move to the project root whether we render from the root or from 1_code.
+# knitr resets the working directory after every chunk, so we store ROOT and
+# build absolute paths with file.path(ROOT, ...) instead of relying on setwd().
+if (dir.exists(file.path(getwd(), "1_code"))) setwd(file.path(getwd(), "1_code"))
 setwd("..")
 ROOT <- getwd()
 
-# Packages
-need <- c("readr","haven","dplyr","sandwich","lmtest","modelsummary")
+need <- c("sandwich", "tibble", "modelsummary")
 to_install <- setdiff(need, rownames(installed.packages()))
 if (length(to_install)) install.packages(to_install)  # repos taken from options()
 invisible(lapply(need, require, character.only = TRUE))
+
+# One self-contained pipeline: import -> transform -> analyse (no other file needed)
+df <- read.csv(file.path(ROOT, "0_data", "gen_ai_earnings.csv"))
+df$earnings_scaled <- df$earnings / 10
+df <- df[df$earnings_scaled >= 0, , drop = FALSE]
+
+mod <- lm(earnings_scaled ~ gen_ai, data = df)
+vc  <- sandwich::vcovHC(mod, type = "HC1")           # robust SE, matches Stata's ", r"
 ```
 
 ## Table 1
+
 ```{r}
-# Import the edited rds file
-path_edit  <- file.path(ROOT, "2_process", "edit_gen_ai_earnings.rds")
-df <- readRDS(path_edit)
+#| echo: false
 
-# Regression with robust SE
-mod <- lm(earnings_scaled ~ gen_ai, data = df)
-vc  <- sandwich::vcovHC(mod, type = "HC1")  # heteroskedasticity-robust (Stata's ,r)
-
-# Export table 
 df_m <- length(coef(mod)) - 1L  # model df (number of regressors)
 
 gof_map <- data.frame(
-  raw   = c("r.squared","statistic","p.value","nobs"),
-  clean = c("R2","F","p","N"),
-  fmt   = c(3,3,3,0)
+  raw   = c("r.squared", "statistic", "p.value", "nobs"),
+  clean = c("R2", "F", "p", "N"),
+  fmt   = c(3, 3, 3, 0)
 )
 
-# Add df_m as a custom row at the end
 add_rows_tbl <- tibble::tibble(term = "df_m", `Model 1` = df_m)
 
 modelsummary::modelsummary(
   list("Model 1" = mod),
   vcov      = list(vc),
-  estimate  = "{estimate}",
   statistic = "({std.error})",
   stars     = c("*" = .10, "**" = .05, "***" = .01),
   gof_map   = gof_map,
   add_rows  = add_rows_tbl,
   fmt       = 3,
   title     = "TABLE 1 - REGRESSIONS OF SCALED EARNINGS ON GENERATIVE AI",
-  notes     = "p-levels are two-tailed, * p < 0.10, ** p < 0.05, *** p < 0.01; robust SE in parentheses.",
-  output    = "latex"   # emit LaTeX into the slide; no .tex files created
+  notes     = "Robust standard errors in parentheses. * p < 0.10, ** p < 0.05, *** p < 0.01.",
+  output    = "latex"   # emit LaTeX into the slide; no .tex file created
 )
 ```
