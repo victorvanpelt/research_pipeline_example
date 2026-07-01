@@ -1,47 +1,39 @@
-# Ignore everything
+# Ignore everything by default...
 *
 
-# Keep these specific files
+# ...but keep the project scaffolding
 !.gitignore
+!.gitattributes
 !makefile.mak
 !README.md
 
-# Keep folder 0_data but not its contents
+# 0_data: keep the folder and the shared synthetic example CSV.
+# Real raw data is intentionally NOT shared here (add it locally; it stays ignored).
 !0_data/
 !0_data/.gitkeep
+!0_data/gen_ai_earnings.csv
 
-# Keep folder 1_code and its contents
+# 1_code: keep the folder and all code (the scripts are the point of the repo),
+# but not the artifacts rendering code.qmd leaves behind
 !1_code/
 !1_code/**
+1_code/*.pdf
+1_code/*.html
+1_code/*_files/
 
-# Keep folder 2_process but not its contents
+# 2_process: keep the folder but none of its intermediate contents
 !2_process/
 !2_process/.gitkeep
 
-# Keep folder 3_output and all its contents
+# 3_output: keep the folder and all shared outputs (tables, figures)
 !3_output/
 !3_output/**
 
-# Ignore everything
-*
-
-# Keep these specific files
-!.gitignore
-!makefile.mak
-!README.md
-
-# Keep folder 0_data but not its contents
-!0_data/
-!0_data/.gitkeep
-
-# Keep folder 1_code and its contents
-!1_code/
-!1_code/**
-
-# Keep folder 2_process but not its contents
-!2_process/
-!2_process/.gitkeep
-
-# Keep folder 3_output and all its contents
-!3_output/
-!3_output/**
+# 4_drafts: keep the sources, the materials, and the rendered PDFs;
+# render intermediates (.tex, .html, .aux, *_files/, ...) stay ignored.
+!4_drafts/
+!4_drafts/*.qmd
+!4_drafts/*.bib
+!4_drafts/*.pdf
+!4_drafts/materials/
+!4_drafts/materials/**
