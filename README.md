@@ -15,6 +15,8 @@ This template avoids that by enforcing two habits:
 
 The payoff is that the project is *reproducible* (anyone can rebuild every result from the code) and *dynamic* (change the data, re-run, and the manuscript updates itself).
 
+This structure is in line with the concept of the [TIER Protocol](https://www.projecttier.org/tier-protocol/protocol-4-0/), a widely used standard for documenting reproducible research.
+
 ## What "dynamic" means here
 
 "Dynamic" is the combination of two ideas:
@@ -34,22 +36,28 @@ Edit `0_data/gen_ai_earnings.csv` (or the code), run `make`, and the coefficient
 ```
 research_pipeline_example/
 ├── 0_data/        raw inputs      (real raw data is NOT shared; see below)
-│   └── gen_ai_earnings.csv        small synthetic dataset so the example runs
+│   ├── gen_ai_earnings.csv        small synthetic dataset so the example runs
+│   └── codebook.md                what each variable means, where the data come from
 ├── 1_code/        analysis code   (shared; the heart of the repo)
 │   ├── code.do      Stata
 │   ├── code.r       R
 │   └── code.qmd     Quarto (self-contained literate report)
 ├── 2_process/     intermediate / passing data between steps (NOT shared)
 ├── 3_output/      shared outputs: tables and figures
-│   └── table_1.tex               written by the analysis, read by the drafts
-├── 4_drafts/      the manuscript and the slides
-│   ├── paper_example.qmd
-│   ├── presentation_example.qmd
-│   ├── references.bib
-│   └── materials/  beamer theme, logo, fonts
-├── makefile.mak   build tasks (the pipeline)
-├── .gitignore     what is and is not version-controlled
-└── README.md
+│   ├── table_1.tex               written by the analysis, read by the drafts
+│   └── data_appendix/            stats and figures for the data appendix
+├── 4_drafts/      the documents; each .qmd renders to a committed .pdf
+│   ├── paper_example.qmd          the manuscript
+│   ├── presentation_example.qmd   the slides
+│   ├── data_appendix_example.qmd  the data appendix (describes the analysis data)
+│   ├── references.bib             bibliography for the drafts
+│   └── materials/                 beamer theme, logo, fonts for the slides
+├── makefile.mak     build tasks (the pipeline)
+├── Makefile         two-line wrapper including makefile.mak, so plain `make` works
+├── AGENTS.md        rules for AI coding agents working in this repo
+├── .gitignore       what is and is not version-controlled
+├── .gitattributes   normalizes line endings across operating systems
+└── README.md        this file
 ```
 
 The folders are numbered in the order data flow through them: `0_data → 1_code → 2_process → 3_output → 4_drafts`.
@@ -63,17 +71,20 @@ Other folders you might add as a project grows:
 ## How the pieces connect
 
 ```
-0_data/gen_ai_earnings.csv
+0_data/gen_ai_earnings.csv   (documented in 0_data/codebook.md)
         │
         ▼
-1_code  (run ONE engine: code.r  |  code.do  |  code.qmd)
+1_code  (run ONE engine: code.r | code.do; code.qmd is self-contained ─► 1_code/code.pdf)
         │
-        ├──► 2_process/edit_gen_ai_earnings.(rds|dta)   intermediate data
-        │
-        └──► 3_output/table_1.tex                       shared table
+        ├──► 2_process/gen_ai_earnings.(rds|dta)        untouched raw copy
+        ├──► 2_process/edit_gen_ai_earnings.(rds|dta)   edited analysis data
+        ├──► 3_output/table_1.tex                       shared table
+        └──► 3_output/data_appendix/                    appendix stats + figures
                     │
-                    ├──► 4_drafts/paper_example.qmd         ─► paper_example.pdf
-                    └──► 4_drafts/presentation_example.qmd  ─► presentation_example.pdf
+                    ▼   (the drafts read from 2_process and 3_output)
+        ├──► 4_drafts/paper_example.qmd          ─► paper_example.pdf
+        ├──► 4_drafts/presentation_example.qmd   ─► presentation_example.pdf
+        └──► 4_drafts/data_appendix_example.qmd  ─► data_appendix_example.pdf
 ```
 
 ## The three analysis engines (pick one)
@@ -87,6 +98,8 @@ Other folders you might add as a project grows:
 | `code.qmd` | Quarto | a self-contained literate report that builds the table inline at render time |
 
 The analysis itself is deliberately trivial: regress a scaled earnings measure on a generative-AI indicator, with heteroskedasticity-robust standard errors. The point is the plumbing, not the result.
+
+`code.r` and `code.do` also write the data appendix's statistics and figures to `3_output/data_appendix/`; `4_drafts/data_appendix_example.qmd` assembles them into a short document describing the analysis data variable by variable. `code.qmd` is self-contained and skips this step.
 
 ## Quickstart
 
@@ -104,26 +117,26 @@ The synthetic dataset is already in `0_data`, so the example runs immediately.
 **3. Build everything.**
 
 ```bash
-make -f makefile.mak
+make
 ```
 
-This runs the R analysis, then renders the paper and the slides. Open the results in `4_drafts/`.
-
-> **Why `-f makefile.mak`?** The build file is named `makefile.mak` rather than the usual `Makefile` so it does not clash with other tooling and is easy to spot. Tell `make` to use it with `-f makefile.mak`, or rename it to `Makefile` and just type `make`.
+This runs the R analysis, then renders the data appendix, the paper, and the slides. Open the results in `4_drafts/`. (The build logic lives in `makefile.mak`, named so it is easy to spot; the two-line `Makefile` just includes it so plain `make` works.)
 
 ## Make targets
 
 | Command | Result |
 |---------|--------|
-| `make` (or `make all`) | run the R analysis, then render the paper and the slides |
+| `make` (or `make all`) | run the R analysis, then render the data appendix, the paper, and the slides |
 | `make r`      | run the R analysis (`1_code/code.r`) |
 | `make stata`  | run the Stata analysis (`1_code/code.do`) |
 | `make quarto` | render the self-contained Quarto report (`1_code/code.qmd`) |
+| `make appendix` | render the data appendix (`4_drafts/data_appendix_example.qmd`) |
 | `make paper`  | render the paper (`4_drafts/paper_example.qmd`) |
 | `make slides` | render the slides (`4_drafts/presentation_example.qmd`) |
 | `make clean`  | delete everything the pipeline generates, so the next `make` reproduces it from scratch |
+| `make help`   | list the targets |
 
-Run `make r` (or `make stata`) before `make paper`/`make slides`, because the drafts read the files those steps write. `make` (with no target) already does this in the right order.
+`make` (with no target) runs everything in the right order. If you build a single document, run `make r` (or `make stata`) first, because the drafts read the files those steps write.
 
 The tool locations are overridable if they are not on your `PATH`:
 
@@ -139,7 +152,7 @@ The `.gitignore` uses an *ignore-everything-then-allow* strategy: it ignores all
 
 | Folder | Shared in git? | Why |
 |--------|:--------------:|-----|
-| `0_data`    | only the synthetic CSV | **Real raw data should not be shared.** Drop your own data here; it stays ignored. The synthetic file is a teaching exception so the example runs. |
+| `0_data`    | the synthetic CSV and its codebook | **Real raw data should not be shared.** Drop your own data here; it stays ignored. The synthetic file is a teaching exception so the example runs. |
 | `1_code`    | yes | Code is the reproducible core of the project. |
 | `2_process` | no  | Intermediate files are large and disposable; they are regenerated by the code. |
 | `3_output`  | yes | Final tables and figures, so collaborators and readers can see results without rerunning. |
@@ -149,7 +162,7 @@ Each folder keeps a `.gitkeep` file so the (otherwise empty) folder still exists
 
 ## Adapting this to your own project
 
-1. Replace `0_data/gen_ai_earnings.csv` with your data (and keep real raw data out of git).
+1. Replace `0_data/gen_ai_earnings.csv` with your data (and keep real raw data out of git). Update `0_data/codebook.md` so every variable and the data's origin stay documented.
 2. Edit the transform and analysis in your engine of choice in `1_code`. Write your tables and figures to `3_output`.
 3. In `4_drafts`, write your paper and slides so they read from `2_process` and `3_output` instead of hard-coding numbers.
 4. Keep the folder discipline. When in doubt: raw data in `0_data`, code in `1_code`, throwaway files in `2_process`, results you keep in `3_output`, writing in `4_drafts`.
@@ -160,10 +173,10 @@ You do not need everything below; install what your chosen engine and outputs re
 
 - **Git**, to clone and version the project.
 - **GNU Make.** Ships with macOS and Linux. On Windows, run the commands from **Git Bash**, **WSL**, or **MSYS2**, which provide `make` together with `rm`, `mv`, and `find`.
-- **An analysis engine:** Stata (with the `estout` package: run `ssc install estout` once), or R (with the `sandwich` package), or just Quarto + R.
+- **An analysis engine:** Stata (with the `estout` package: run `ssc install estout` once), or R (with the `sandwich` package), or just Quarto + R (`code.qmd` also uses `tibble` and `modelsummary`).
 - **Quarto**, to render the drafts and the Quarto report.
 - **A LaTeX distribution** for the PDFs. [TinyTeX](https://yihui.org/tinytex/) is the easiest (`quarto install tinytex`). The slides use **xelatex** for the custom fonts.
-- **R packages for rendering Quarto:** `rmarkdown` and `knitr` (Quarto's knitr engine needs them). Install with `install.packages(c("rmarkdown", "knitr"))`. The scripts install their own analysis packages automatically.
+- **R packages for rendering Quarto:** `rmarkdown` and `knitr` (Quarto's knitr engine needs them). Install with `install.packages(c("rmarkdown", "knitr"))`. The scripts install their own analysis packages automatically, including `haven` when the drafts render from Stata's `.dta` output.
 
 ---
 

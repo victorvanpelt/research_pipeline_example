@@ -84,5 +84,58 @@ tex <- c(
 )
 writeLines(tex, path_table)
 
+# 5. Data appendix output: summary statistics and distribution figures for the
+#    analysis data, written to 3_output/data_appendix and assembled into a
+#    document by 4_drafts/data_appendix_example.qmd.
+path_appx <- file.path(ROOT, "3_output", "data_appendix")
+dir.create(path_appx, showWarnings = FALSE, recursive = TRUE)
+
+# Summary statistics for the quantitative variables: n(missing), mean, sd,
+# min, p25, median, p75, max.
+sum_row <- function(x, name) {
+  qs <- quantile(x, c(.25, .50, .75), na.rm = TRUE)
+  sprintf("%s & %d(%d) & %s & %s & %s & %s & %s & %s & %s \\\\", name,
+          sum(!is.na(x)), sum(is.na(x)),
+          f3(mean(x, na.rm = TRUE)), f3(sd(x, na.rm = TRUE)),
+          f3(min(x, na.rm = TRUE)), f3(qs[1]), f3(qs[2]), f3(qs[3]),
+          f3(max(x, na.rm = TRUE)))
+}
+writeLines(c(
+  "\\begin{tabular}{lccccccccc}",
+  "\\toprule",
+  " & n(missing) & Mean & SD & Min & p25 & Median & p75 & Max \\\\",
+  "\\midrule",
+  sum_row(df$earnings,        "earnings"),
+  sum_row(df$earnings_scaled, "earnings\\_scaled"),
+  "\\bottomrule",
+  "\\end{tabular}"
+), file.path(path_appx, "summary_stats.tex"))
+
+# Frequency table for the categorical variable
+freq <- table(df$gen_ai)
+writeLines(c(
+  "\\begin{tabular}{lcc}",
+  "\\toprule",
+  "gen\\_ai & Frequency & Percent \\\\",
+  "\\midrule",
+  sprintf("%s & %d & %s \\\\", names(freq), as.integer(freq),
+          f3(100 * as.integer(freq) / sum(freq))),
+  "\\bottomrule",
+  "\\end{tabular}"
+), file.path(path_appx, "freq_gen_ai.tex"))
+
+# Distribution figures: histograms for the quantitative variables, a bar
+# chart for the categorical one.
+plot_png <- function(file, expr) {
+  png(file.path(path_appx, file), width = 1400, height = 1000, res = 200)
+  expr; dev.off()
+}
+plot_png("hist_earnings.png",
+         hist(df$earnings, main = NULL, xlab = "earnings", col = "grey80"))
+plot_png("hist_earnings_scaled.png",
+         hist(df$earnings_scaled, main = NULL, xlab = "earnings_scaled", col = "grey80"))
+plot_png("bar_gen_ai.png",
+         barplot(freq, xlab = "gen_ai", ylab = "Frequency", col = "grey80"))
+
 # Exit
 q(save = "no")
