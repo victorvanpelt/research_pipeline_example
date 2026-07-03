@@ -144,7 +144,7 @@ Each folder keeps a `.gitkeep` file so the (otherwise empty) folder still exists
 
 ## AI coding agents
 
-`AGENTS.md` states the rules AI coding agents must follow in this repository; most agentic coding tools read it automatically. The rules protect the pipeline's discipline: raw data in `0_data` are read-only, files in `2_process` and `3_output` are build artifacts only the code may write, the three analysis engines stay in sync, and agents never commit or push, so every change stays in the working tree for you to review. A change counts as done only when `make clean` followed by `make` rebuilds every output without errors.
+`AGENTS.md` states the rules AI coding agents must follow in this repository. Most agentic coding tools read it automatically. The rules protect the pipeline's discipline and ensures AI only helps users code. So, raw data in `0_data` are read-only, files in `2_process` and `3_output` are build artifacts only the code may write, the three analysis engines stay in sync, and agents never do research processes directly, never commit, and never push. In this way, every change stays in the working tree for the user to review. A change counts as done only when `make clean` followed by `make` rebuilds every output without errors.
 
 ## Requirements
 
