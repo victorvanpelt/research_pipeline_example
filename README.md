@@ -1,35 +1,10 @@
 # Research Pipeline Example
 
-A small, working template for a **reproducible and dynamic** research project: raw data go in, one command runs the analysis and builds the paper and the slides, and every number and table in those documents is pulled straight from the code. Nothing is copied by hand, so nothing goes stale.
+A working template for a reproducible and dynamic research project: raw data go in, one command runs the analysis and builds the paper and the slides, and every number and table in those documents is pulled straight from the code. Nothing is copied by hand, so nothing goes stale, and everything is reproducible. The pipeline is also dynamic: `make` rebuilds everything in the right order, from raw data to finished PDF, and the paper and slides are written in [Quarto](https://quarto.org), so they read results from the analysis instead of hard-coding them. Edit the code, run `make`, and every number, table, and document updates together. No copy-paste, no mismatched numbers.
 
-It is meant as a starting point for PhD students and faculty. The example uses Stata, R, and Quarto, but the structure works with any language.
+This pipeline is meant as a starting point for empirical research projects by academics and researchers. The example showcases Stata, R, and Quarto processes, but, in principle, the structure works with any coding language.
 
-## Why a pipeline?
-
-Most research projects accumulate a pile of scripts, spreadsheets, and a manuscript whose numbers were pasted in by hand months ago. When the data change, someone has to remember every table, coefficient, and sample size to update. That is slow and error-prone.
-
-This template avoids that by enforcing two habits:
-
-1. **Separate the stages.** Raw data, code, intermediate files, outputs, and drafts each live in their own numbered folder and never mix.
-2. **Generate everything downstream from code.** Tables, the paper, and the slides are rebuilt from the data by running the pipeline, so they are always in sync.
-
-The payoff is that the project is *reproducible* (anyone can rebuild every result from the code) and *dynamic* (change the data, re-run, and the manuscript updates itself).
-
-This structure is in line with the concept of the [TIER Protocol](https://www.projecttier.org/tier-protocol/protocol-4-0/), a widely used standard for documenting reproducible research.
-
-## What "dynamic" means here
-
-"Dynamic" is the combination of two ideas:
-
-- **A build pipeline.** `make` re-runs the analysis and re-renders the documents in the right order, from raw data to finished PDF.
-- **Literate documents.** The paper and slides are written in [Quarto](https://quarto.org), which lets a document *read* results from the analysis instead of hard-coding them.
-
-Concretely, in this example:
-
-- The paper reports its sample size with `` `r sample_size` `` , a value read from the processed data rather than typed in.
-- Table 1 in both the paper and the slides is `\input` from `3_output/table_1.tex`, the exact file the analysis wrote.
-
-Edit `0_data/gen_ai_earnings.csv` (or the code), run `make`, and the coefficient, the table, the reported sample size, the paper, and the slides all change together. No copy-paste, no mismatched numbers.
+The structure of this research pipeline is in line with the concept of the [TIER Protocol](https://www.projecttier.org/tier-protocol/protocol-4-0/), a widely used standard for documenting reproducible research.
 
 ## Repository structure
 
