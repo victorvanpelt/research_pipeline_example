@@ -5,6 +5,8 @@
 !.gitignore
 !.gitattributes
 !makefile.mak
+!Makefile
+!AGENTS.md
 !README.md
 
 # 0_data: keep the folder and the shared synthetic example CSV.
