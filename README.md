@@ -142,6 +142,10 @@ Each folder keeps a `.gitkeep` file so the (otherwise empty) folder still exists
 3. In `4_drafts`, write your paper and slides so they read from `2_process` and `3_output` instead of hard-coding numbers.
 4. Keep the folder discipline. When in doubt: raw data in `0_data`, code in `1_code`, throwaway files in `2_process`, results you keep in `3_output`, writing in `4_drafts`.
 
+## AI coding agents
+
+`AGENTS.md` states the rules AI coding agents must follow in this repository; most agentic coding tools read it automatically. The rules protect the pipeline's discipline: raw data in `0_data` are read-only, files in `2_process` and `3_output` are build artifacts only the code may write, the three analysis engines stay in sync, and agents never commit or push, so every change stays in the working tree for you to review. A change counts as done only when `make clean` followed by `make` rebuilds every output without errors.
+
 ## Requirements
 
 You do not need everything below; install what your chosen engine and outputs require.
