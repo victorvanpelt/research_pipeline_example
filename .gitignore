@@ -9,11 +9,12 @@
 !AGENTS.md
 !README.md
 
-# 0_data: keep the folder and the shared synthetic example CSV.
+# 0_data: keep the folder, the shared synthetic example CSV, and its codebook.
 # Real raw data is intentionally NOT shared here (add it locally; it stays ignored).
 !0_data/
 !0_data/.gitkeep
 !0_data/gen_ai_earnings.csv
+!0_data/codebook.md
 
 # 1_code: keep the folder and all code (the scripts are the point of the repo),
 # but not the artifacts rendering code.qmd leaves behind

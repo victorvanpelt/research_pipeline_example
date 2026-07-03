@@ -32,5 +32,33 @@ title(TABLE 1 - REGRESSIONS OF SCALED EARNINGS ON GENERATIVE AI) ///
 nonotes addnotes("Robust standard errors in parentheses. * p<0.10, ** p<0.05, *** p<0.01.")
 eststo clear
 
+//Write the data appendix output: summary statistics and distribution figures
+//for the analysis data, written to 3_output/data_appendix and assembled into
+//a document by 4_drafts/data_appendix_example.qmd.
+capture mkdir "3_output/data_appendix"
+
+//summary statistics for the quantitative variables
+estpost tabstat earnings earnings_scaled, statistics(count mean sd min p25 p50 p75 max) columns(statistics)
+esttab using "3_output/data_appendix/summary_stats.tex", replace booktabs ///
+    cells("count(fmt(0)) mean(fmt(3)) sd(fmt(3)) min(fmt(3)) p25(fmt(3)) p50(fmt(3)) p75(fmt(3)) max(fmt(3))") ///
+    nonumber nomtitle nonote noobs
+eststo clear
+
+//frequency table for the categorical variable
+estpost tabulate gen_ai
+esttab using "3_output/data_appendix/freq_gen_ai.tex", replace booktabs ///
+    cells("b(fmt(0)) pct(fmt(1))") collabels("Frequency" "Percent") ///
+    nonumber nomtitle noobs
+eststo clear
+
+//distribution figures: histograms for the quantitative variables, a bar
+//chart for the categorical one
+histogram earnings, color(gs12)
+graph export "3_output/data_appendix/hist_earnings.png", replace width(1400)
+histogram earnings_scaled, color(gs12)
+graph export "3_output/data_appendix/hist_earnings_scaled.png", replace width(1400)
+graph bar (count), over(gen_ai) bar(1, color(gs12)) ytitle("Frequency")
+graph export "3_output/data_appendix/bar_gen_ai.png", replace width(1400)
+
 //close stata
 exit, STATA clear
