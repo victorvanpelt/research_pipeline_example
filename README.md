@@ -145,7 +145,7 @@ Each folder keeps a `.gitkeep` file so the (otherwise empty) folder still exists
 
 ## AI coding agents
 
-Agentic coding is evolving rapidly. Any tool-specific setup this repository could ship might be obsolete within a week, so it ships none. The part that should stand the test of time is the set of rules coding agents follow when they work in a research pipeline.
+Agentic coding is evolving rapidly. In a team, every coauthor also brings their own coding agent solution, so nobody's personal setup belongs in the shared repository. Any tool-specific setup this repository could ship might be obsolete within a week, so it ships none. The part that should stand the test of time is the set of rules coding agents follow when they work in a research pipeline.
 
 `AGENTS.md` states the rules AI coding agents must follow in this repository. Most agentic coding tools read it automatically. The rules protect the pipeline's discipline and ensure AI only helps users code within the boundaries and rules of the research pipeline. So, raw data in `0_data` are read-only, files in `2_process` and `3_output` are build artifacts only the code may write, the three analysis engines stay in sync, and agents never do research processes directly, never commit, and never push. In this way, every change stays in the working tree for the user to review. A change counts as done only when `make clean` followed by `make` rebuilds every output without errors.
 
