@@ -8,6 +8,7 @@
 !Makefile
 !AGENTS.md
 !README.md
+!LICENSE
 
 # 0_data: keep the folder, the shared synthetic example CSV, and its codebook.
 # Real raw data is intentionally NOT shared here (add it locally; it stays ignored).
