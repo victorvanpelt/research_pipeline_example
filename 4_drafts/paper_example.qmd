@@ -95,7 +95,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 <!-- Main Document -->
 ## Introduction
 
-This template shows how a paper can pull numbers and tables straight from the analysis pipeline, so the manuscript never falls out of sync with the data. For example, our estimation sample contains `r sample_size` observations, and that number is read (dynamically, from the processed data in `2_process`) rather than typed by hand.[^1] Citations work as usual: @HLL_2000 discuss reproducibility in accounting research, and the same point can be made parenthetically [@HLL_2000].
+This template shows how a paper can pull numbers and tables straight from the analysis pipeline, so the manuscript never falls out of sync with the data. For example, our estimation sample contains `r sample_size` observations, and that number is read (dynamically, from the processed data in `2_process`) rather than typed by hand.[^1] Citations work as usual: @HLL_2020 discuss reproducibility in accounting research, and the same point can be made parenthetically [@HLL_2020].
 
 [^1]: You can also write in footnotes.
 

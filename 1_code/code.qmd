@@ -39,15 +39,29 @@ vc  <- sandwich::vcovHC(mod, type = "HC1")           # robust SE, matches Stata'
 ```{r}
 #| echo: false
 
-df_m <- length(coef(mod)) - 1L  # model df (number of regressors)
+# Robust Wald F for the single slope, computed from the same robust vcov the
+# table uses. modelsummary's goodness-of-fit list for lm carries no F or p, so
+# these rows are added explicitly; without them the table would silently omit
+# both and stop matching the tables code.r and code.do write to 3_output.
+b_q  <- coef(mod)
+se_q <- sqrt(diag(vc))
+n_q  <- as.integer(nobs(mod))
+df_m <- length(b_q) - 1L  # model df (number of regressors)
+F_q  <- unname((b_q["gen_ai"] / se_q["gen_ai"])^2)
+p_q  <- pf(F_q, df_m, n_q - length(b_q), lower.tail = FALSE)
+
+f3 <- function(x) formatC(x, format = "f", digits = 3)
 
 gof_map <- data.frame(
-  raw   = c("r.squared", "statistic", "p.value", "nobs"),
-  clean = c("R2", "F", "p", "N"),
-  fmt   = c(3, 3, 3, 0)
+  raw   = c("r.squared", "nobs"),
+  clean = c("R2", "N"),
+  fmt   = c(3, 0)
 )
 
-add_rows_tbl <- tibble::tibble(term = "df_m", `Model 1` = df_m)
+add_rows_tbl <- tibble::tibble(
+  term        = c("df_m", "F", "p"),
+  `Model 1`   = c(as.character(df_m), f3(F_q), f3(p_q))
+)
 
 modelsummary::modelsummary(
   list("Model 1" = mod),

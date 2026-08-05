@@ -101,7 +101,7 @@ sum_row <- function(x, name) {
           f3(max(x, na.rm = TRUE)))
 }
 writeLines(c(
-  "\\begin{tabular}{lccccccccc}",
+  "\\begin{tabular}{lcccccccc}",
   "\\toprule",
   " & n(missing) & Mean & SD & Min & p25 & Median & p75 & Max \\\\",
   "\\midrule",

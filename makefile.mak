@@ -13,14 +13,16 @@
 #    make help       list the targets
 #
 #  Tools are overridable, e.g.:  make r RSCRIPT=/path/to/Rscript
+#                                make stata STATA=StataSE-64 STATAFLAG=/e
 #  Forward slashes work on every OS. On Windows, run this from Git Bash / WSL /
 #  MSYS2, which provide make together with rm, mv, and find.
 # ==========================================================================
 
 # Tools (override on the command line or via environment variables)
-RSCRIPT ?= Rscript
-STATA   ?= stata-se
-QUARTO  ?= quarto
+RSCRIPT   ?= Rscript
+STATA     ?= stata-se
+STATAFLAG ?= -b
+QUARTO    ?= quarto
 
 .DEFAULT_GOAL := all
 .PHONY: all r stata quarto appendix paper slides clean help
@@ -32,9 +34,9 @@ all: r appendix paper slides
 r:
 	$(RSCRIPT) --vanilla 1_code/code.r
 
-# On Windows Stata the batch flag is "/e" instead of "-b".
+# On Windows Stata the batch flag is "/e":  make stata STATAFLAG=/e
 stata:
-	$(STATA) -b do 1_code/code.do
+	$(STATA) $(STATAFLAG) do 1_code/code.do
 	@rm -f code.log 1_code/code.log
 
 quarto:

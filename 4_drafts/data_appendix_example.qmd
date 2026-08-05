@@ -81,7 +81,7 @@ Derived variable: `earnings / 10`. Observations with `earnings_scaled < 0` are d
 
 # Summary statistics
 
-Reported as n(missing), mean, standard deviation, minimum, 25th percentile, median, 75th percentile, and maximum.
+Reported as the number of observations, mean, standard deviation, minimum, 25th percentile, median, 75th percentile, and maximum. The R engine also gives the count of missing values in parentheses; Stata's `tabstat` has no missing-value statistic, so that engine reports the observation count alone.
 
 ```{=tex}
 \begin{center}

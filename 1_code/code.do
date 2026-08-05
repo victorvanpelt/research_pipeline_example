@@ -26,8 +26,11 @@ eststo: regress earnings_scaled gen_ai, r
 
 //Write a LaTeX table to 3_output that the paper and slides can \input.
 //"booktabs" produces \toprule/\midrule/\bottomrule, matching the R output.
+//"nonumbers" drops esttab's default "(1)" header row and "coeflabels" renames
+//"_cons" to "Constant", so this table matches the one code.r writes.
 esttab using "3_output/table_1.tex", replace booktabs ///
 b(3) se(3) star(* 0.10 ** 0.05 *** 0.01) stats(r2 F p N, fmt(3 3 3 0)) ///
+nonumbers coeflabels(_cons Constant) ///
 title(TABLE 1 - REGRESSIONS OF SCALED EARNINGS ON GENERATIVE AI) ///
 nonotes addnotes("Robust standard errors in parentheses. * p<0.10, ** p<0.05, *** p<0.01.")
 eststo clear
@@ -39,8 +42,11 @@ capture mkdir "3_output/data_appendix"
 
 //summary statistics for the quantitative variables
 estpost tabstat earnings earnings_scaled, statistics(count mean sd min p25 p50 p75 max) columns(statistics)
+//"collabels" gives the same column headers code.r writes. Stata's tabstat has
+//no missing-value count, so this engine reports N rather than R's "n(missing)".
 esttab using "3_output/data_appendix/summary_stats.tex", replace booktabs ///
     cells("count(fmt(0)) mean(fmt(3)) sd(fmt(3)) min(fmt(3)) p25(fmt(3)) p50(fmt(3)) p75(fmt(3)) max(fmt(3))") ///
+    collabels("N" "Mean" "SD" "Min" "p25" "Median" "p75" "Max") ///
     nonumber nomtitle nonote noobs
 eststo clear
 
