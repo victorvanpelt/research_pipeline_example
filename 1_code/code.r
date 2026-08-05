@@ -75,7 +75,7 @@ tex <- c(
   sprintf("Observations & %d \\\\", n),
   sprintf("$R^2$ & %s \\\\",        f3(r2)),
   sprintf("F & %s \\\\",            f3(Fst)),
-  sprintf("p & %s \\\\",            f3(Fp)),
+  sprintf("p-value & %s \\\\",      f3(Fp)),
   "\\bottomrule",
   "\\end{tabular}",
   "\\par\\vspace{0.4em}",
@@ -90,12 +90,13 @@ writeLines(tex, path_table)
 path_appx <- file.path(ROOT, "3_output", "data_appendix")
 dir.create(path_appx, showWarnings = FALSE, recursive = TRUE)
 
-# Summary statistics for the quantitative variables: n(missing), mean, sd,
-# min, p25, median, p75, max.
+# Summary statistics for the quantitative variables: N, mean, sd, min, p25,
+# median, p75, max. Same columns, in the same order, as the Stata engine's
+# esttab call, so either engine produces an interchangeable table.
 sum_row <- function(x, name) {
   qs <- quantile(x, c(.25, .50, .75), na.rm = TRUE)
-  sprintf("%s & %d(%d) & %s & %s & %s & %s & %s & %s & %s \\\\", name,
-          sum(!is.na(x)), sum(is.na(x)),
+  sprintf("%s & %d & %s & %s & %s & %s & %s & %s & %s \\\\", name,
+          sum(!is.na(x)),
           f3(mean(x, na.rm = TRUE)), f3(sd(x, na.rm = TRUE)),
           f3(min(x, na.rm = TRUE)), f3(qs[1]), f3(qs[2]), f3(qs[3]),
           f3(max(x, na.rm = TRUE)))
@@ -103,7 +104,7 @@ sum_row <- function(x, name) {
 writeLines(c(
   "\\begin{tabular}{lcccccccc}",
   "\\toprule",
-  " & n(missing) & Mean & SD & Min & p25 & Median & p75 & Max \\\\",
+  " & N & Mean & SD & Min & p25 & Median & p75 & Max \\\\",
   "\\midrule",
   sum_row(df$earnings,        "earnings"),
   sum_row(df$earnings_scaled, "earnings\\_scaled"),
@@ -111,15 +112,18 @@ writeLines(c(
   "\\end{tabular}"
 ), file.path(path_appx, "summary_stats.tex"))
 
-# Frequency table for the categorical variable
+# Frequency table for the categorical variable, with the Total row Stata's
+# estpost tabulate adds, so both engines write the same table.
 freq <- table(df$gen_ai)
+f1   <- function(x) formatC(x, format = "f", digits = 1)
 writeLines(c(
   "\\begin{tabular}{lcc}",
   "\\toprule",
-  "gen\\_ai & Frequency & Percent \\\\",
+  " & Frequency & Percent \\\\",
   "\\midrule",
   sprintf("%s & %d & %s \\\\", names(freq), as.integer(freq),
-          f3(100 * as.integer(freq) / sum(freq))),
+          f1(100 * as.integer(freq) / sum(freq))),
+  sprintf("Total & %d & %s \\\\", sum(freq), f1(100)),
   "\\bottomrule",
   "\\end{tabular}"
 ), file.path(path_appx, "freq_gen_ai.tex"))

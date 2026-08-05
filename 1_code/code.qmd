@@ -53,23 +53,28 @@ p_q  <- pf(F_q, df_m, n_q - length(b_q), lower.tail = FALSE)
 f3 <- function(x) formatC(x, format = "f", digits = 3)
 
 gof_map <- data.frame(
-  raw   = c("r.squared", "nobs"),
-  clean = c("R2", "N"),
-  fmt   = c(3, 0)
+  raw   = c("nobs", "r.squared"),
+  clean = c("Observations", "$R^2$"),
+  fmt   = c(0, 3)
 )
 
 add_rows_tbl <- tibble::tibble(
-  term        = c("df_m", "F", "p"),
-  `Model 1`   = c(as.character(df_m), f3(F_q), f3(p_q))
+  term      = c("F", "p-value"),
+  `Model 1` = c(f3(F_q), f3(p_q))
 )
 
+# coef_map fixes the row order and renames the intercept, so this table lists
+# the same rows, in the same order, as the ones code.r and code.do write.
+# escape = FALSE lets the $R^2$ label reach LaTeX as maths.
 modelsummary::modelsummary(
   list("Model 1" = mod),
   vcov      = list(vc),
   statistic = "({std.error})",
   stars     = c("*" = .10, "**" = .05, "***" = .01),
+  coef_map  = c("gen_ai" = "gen\\_ai", "(Intercept)" = "Constant"),
   gof_map   = gof_map,
   add_rows  = add_rows_tbl,
+  escape    = FALSE,
   fmt       = 3,
   title     = "TABLE 1 - REGRESSIONS OF SCALED EARNINGS ON GENERATIVE AI",
   notes     = "Robust standard errors in parentheses. * p < 0.10, ** p < 0.05, *** p < 0.01.",

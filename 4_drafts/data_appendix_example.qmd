@@ -41,13 +41,18 @@ read_proc <- function(stem) {
 data <- read_proc("edit_gen_ai_earnings")
 n_analysis <- nrow(data)
 n_raw      <- nrow(read_proc("gen_ai_earnings"))
+
+# Counted here rather than typed, so the sentence below cannot go stale.
+n_missing  <- sum(is.na(data))
+missing_txt <- if (n_missing == 0) "No variable has missing values." else
+  sprintf("The data contain %d missing values.", n_missing)
 ```
 
 This data appendix documents the analysis data: the processed dataset the results are estimated on (`2_process/edit_gen_ai_earnings`). It defines every variable, states how it was derived from the raw data, and shows its distribution, so that anyone reproducing the project can verify that their rebuilt dataset matches this one before rerunning the analysis. The raw input file is documented separately in `0_data/codebook.md`. Every table and figure below is written by the analysis code to `3_output/data_appendix/` and imported here, so this document updates itself when the data or the code change.
 
 # The analysis data file
 
-The unit of observation is one synthetic firm-observation per row. The raw file contains `r n_raw` observations; the analysis data contain `r n_analysis`, after dropping observations with negative scaled earnings. No variable has missing values.
+The unit of observation is one synthetic firm-observation per row. The raw file contains `r n_raw` observations; the analysis data contain `r n_analysis`, after dropping observations with negative scaled earnings. `r missing_txt`
 
 # Variables
 
@@ -81,7 +86,7 @@ Derived variable: `earnings / 10`. Observations with `earnings_scaled < 0` are d
 
 # Summary statistics
 
-Reported as the number of observations, mean, standard deviation, minimum, 25th percentile, median, 75th percentile, and maximum. The R engine also gives the count of missing values in parentheses; Stata's `tabstat` has no missing-value statistic, so that engine reports the observation count alone.
+Reported as the number of observations, mean, standard deviation, minimum, 25th percentile, median, 75th percentile, and maximum.
 
 ```{=tex}
 \begin{center}
