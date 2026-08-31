@@ -45,7 +45,7 @@ header-includes:
 \end{wrapfigure}
 ```
 Dr. Victor van Pelt\
-Assistant Professor of Accounting\
+Professor of Behavioral Accounting\
 Finance and Accounting Group\
 WHU – Otto Beisheim School of Management
 

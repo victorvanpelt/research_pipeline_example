@@ -3,9 +3,9 @@
 #
 #  Usage:
 #    make            run the R analysis, then build the appendix, paper, slides
-#    make r          run the R analysis          (1_code/code.r)
+#    make r          run the R analysis           (1_code/code.r)
 #    make stata      run the Stata analysis       (1_code/code.do)
-#    make quarto     render the self-contained Quarto report (1_code/code.qmd)
+#    make quarto     render the Quarto file       (1_code/code.qmd)
 #    make appendix   render the data appendix     (4_drafts/data_appendix_example.qmd)
 #    make paper      render the paper             (4_drafts/paper_example.qmd)
 #    make slides     render the slides            (4_drafts/presentation_example.qmd)
