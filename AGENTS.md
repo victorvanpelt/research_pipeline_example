@@ -20,11 +20,11 @@ This repository is a template for a reproducible research pipeline. Data flows t
 
 ## Verification
 
-A change is done only when `make clean` followed by `make` completes without errors and every number in the `4_drafts/` outputs comes from the rerun pipeline, not from hand edits.
+A change is done only when `make clean` followed by `make` completes without errors and every number in the `3_output/` and `4_drafts/` comes from the rerun pipeline, not from hand edits.
 
 Verify before you report:
 
-1. After the rebuild, check that the PDFs in `4_drafts/` were regenerated.
+1. After the rebuild, check that everything in `3_output/` and `4_drafts/` were regenerated.
 2. Run `git status` and confirm that only the files you meant to change are modified.
 3. Report what changed, whether the rebuild succeeded, and anything you could not verify.
 
