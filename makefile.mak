@@ -40,9 +40,9 @@ stata:
 	@rm -f code.log 1_code/code.log
 
 quarto:
-	@rm -f 1_code/code.tex 1_code/code.log 1_code/code.pdf 1_code/code.knit.md
+	@rm -f 1_code/code.tex 1_code/code.log 1_code/code.knit.md
 	$(QUARTO) render 1_code/code.qmd
-	@rm -f 1_code/code.tex 1_code/code.log 1_code/code.pdf 1_code/code.knit.md
+	@rm -f 1_code/code.tex 1_code/code.log 1_code/code.knit.md
 
 # --- Manuscript, slides, and data appendix (consume 2_process and 3_output)
 # Run `make r` (or `make stata`) first so the inputs they read exist.
