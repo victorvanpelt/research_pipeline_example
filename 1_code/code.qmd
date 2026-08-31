@@ -2,9 +2,10 @@
 title: "Quarto Example: A Report Built at Render Time"
 author: "Victor van Pelt"
 format:
-  beamer:
-    theme: Madrid
+  pdf:
+    documentclass: article
     fontsize: 9pt
+    geometry: margin=1in
 ---
 
 ```{r}
@@ -13,17 +14,33 @@ format:
 # Use CRAN mirror (needed when running via Rscript / make / quarto)
 options(repos = c(CRAN = "https://cloud.r-project.org"))
 
-# Move to the project root whether we render from the root or from 1_code.
-# knitr resets the working directory after every chunk, so we store ROOT and
-# build absolute paths with file.path(ROOT, ...) instead of relying on setwd().
-if (dir.exists(file.path(getwd(), "1_code"))) setwd(file.path(getwd(), "1_code"))
-setwd("..")
-ROOT <- getwd()
+ensure_packages <- function(pkgs) {
+  missing <- pkgs[!vapply(pkgs, requireNamespace, logical(1), quietly = TRUE)]
+  if (length(missing)) {
+    install.packages(missing, Ncpus = 2)
+  }
+  invisible(lapply(pkgs, require, character.only = TRUE))
+}
 
-need <- c("sandwich", "tibble", "modelsummary")
-to_install <- setdiff(need, rownames(installed.packages()))
-if (length(to_install)) install.packages(to_install)  # repos taken from options()
-invisible(lapply(need, require, character.only = TRUE))
+# Resolve the project root from the current working directory or any parent.
+# This makes the document robust whether it is rendered from repo root, from the
+# 1_code folder, or from a fresh Codespace shell.
+discover_root <- function(start_dir) {
+  cur <- normalizePath(start_dir, winslash = "/", mustWork = FALSE)
+  repeat {
+    data_dir <- file.path(cur, "0_data")
+    if (dir.exists(data_dir) && file.exists(file.path(data_dir, "gen_ai_earnings.csv"))) {
+      return(cur)
+    }
+    parent <- dirname(cur)
+    if (identical(parent, cur)) break
+    cur <- parent
+  }
+  normalizePath(start_dir, winslash = "/", mustWork = FALSE)
+}
+
+ROOT <- discover_root(getwd())
+ensure_packages(c("sandwich", "tibble", "modelsummary", "rmarkdown", "knitr"))
 
 # One self-contained pipeline: import -> transform -> analyse (no other file needed)
 df <- read.csv(file.path(ROOT, "0_data", "gen_ai_earnings.csv"))
