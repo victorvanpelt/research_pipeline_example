@@ -2,9 +2,10 @@
 title: "Quarto Example: A Report Built at Render Time"
 author: "Victor van Pelt"
 format:
-  beamer:
-    theme: Madrid
+  pdf:
+    documentclass: article
     fontsize: 9pt
+    geometry: margin=1in
 ---
 
 ```{r}

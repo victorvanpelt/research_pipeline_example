@@ -40,7 +40,9 @@ stata:
 	@rm -f code.log 1_code/code.log
 
 quarto:
+	@rm -f 1_code/code.tex 1_code/code.log 1_code/code.pdf 1_code/code.knit.md
 	$(QUARTO) render 1_code/code.qmd
+	@rm -f 1_code/code.tex 1_code/code.log 1_code/code.pdf 1_code/code.knit.md
 
 # --- Manuscript, slides, and data appendix (consume 2_process and 3_output)
 # Run `make r` (or `make stata`) first so the inputs they read exist.
@@ -58,7 +60,7 @@ slides:
 # plus stray render artifacts, so a fresh `make` reproduces every output.
 clean:
 	@find 2_process 3_output -type f ! -name '.gitkeep' -delete
-	@rm -f 1_code/code.pdf 4_drafts/*.pdf *.log 1_code/*.log
+	@rm -f 1_code/code.pdf 1_code/code.tex 1_code/code.log 1_code/code.knit.md 4_drafts/*.pdf *.log
 	@echo "Cleaned 2_process, 3_output, and render artifacts."
 
 help:
