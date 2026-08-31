@@ -27,8 +27,7 @@ research_pipeline_example/
 │   ├── data_appendix.qmd		   the data appendix (describes the analysis data)
 │   ├── references.bib             bibliography for the drafts
 │   └── materials/                 beamer theme, logo, fonts for the slides
-├── makefile.mak                   build tasks (the pipeline)
-├── Makefile                       two-line wrapper including makefile.mak
+├── Makefile                       build tasks (the pipeline)
 ├── AGENTS.md                      rules for AI coding agents working in this repo
 ├── LICENSE          		       MIT license
 ├── .gitignore                     what is and is not version-controlled
@@ -97,7 +96,7 @@ The synthetic dataset is already in `0_data`, so the example runs immediately.
 make
 ```
 
-This runs the R analysis, then renders the data appendix, the paper, and the slides. Open the results in `4_drafts/`. (The build logic lives in `makefile.mak`, named so it is easy to spot; the two-line `Makefile` just includes it so plain `make` works.)
+This runs the R analysis, then renders the data appendix, the paper, and the slides. Open the results in `4_drafts/`. (The build logic lives in the `Makefile` at the repo root.)
 
 ## Make targets
 

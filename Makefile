@@ -1,2 +1,67 @@
-# Wrapper so plain "make", "make r", "make clean", ... work as documented.
-include makefile.mak
+# ==========================================================================
+#  Research pipeline - build tasks
+#
+#  Usage:
+#    make            run the R analysis, then build the appendix, paper, slides
+#    make r          run the R analysis           (1_code/code.r)
+#    make stata      run the Stata analysis       (1_code/code.do)
+#    make quarto     render the Quarto file       (1_code/code.qmd)
+#    make appendix   render the data appendix     (4_drafts/data_appendix.qmd)
+#    make paper      render the paper             (4_drafts/paper.qmd)
+#    make slides     render the slides            (4_drafts/presentation.qmd)
+#    make clean      delete everything the pipeline generates
+#    make help       list the targets
+#
+#  Tools are overridable, e.g.:  make r RSCRIPT=/path/to/Rscript
+#                                make stata STATA=StataSE-64 STATAFLAG=/e
+#  Forward slashes work on every OS. On Windows, run this from Git Bash / WSL /
+#  MSYS2, which provide make together with rm, mv, and find.
+# ==========================================================================
+
+# Tools (override on the command line or via environment variables)
+RSCRIPT   ?= Rscript
+STATA     ?= stata-se
+STATAFLAG ?= -b
+QUARTO    ?= quarto
+
+.DEFAULT_GOAL := all
+.PHONY: all r stata quarto appendix paper slides clean help
+
+# Default build: run the R analysis, then render the appendix, paper, slides.
+all: r appendix paper slides
+
+# --- Analysis engines (pick whichever one you use) -----------------------
+r:
+	$(RSCRIPT) --vanilla 1_code/code.r
+
+# On Windows Stata the batch flag is "/e":  make stata STATAFLAG=/e
+stata:
+	$(STATA) $(STATAFLAG) do 1_code/code.do
+	@rm -f code.log 1_code/code.log
+
+quarto:
+	@rm -f 1_code/code.tex 1_code/code.log 1_code/code.knit.md 1_code/code.pdf
+	$(QUARTO) render 1_code/code.qmd
+	@rm -f 1_code/code.tex 1_code/code.log 1_code/code.knit.md 1_code/code.pdf
+
+# --- Manuscript, slides, and data appendix (consume 2_process and 3_output)
+# Run `make r` (or `make stata`) first so the inputs they read exist.
+appendix:
+	$(QUARTO) render 4_drafts/data_appendix.qmd
+
+paper:
+	$(QUARTO) render 4_drafts/paper.qmd
+
+slides:
+	$(QUARTO) render 4_drafts/presentation.qmd
+
+# --- Housekeeping --------------------------------------------------------
+# Delete everything in 2_process and 3_output except the .gitkeep files,
+# plus stray render artifacts, so a fresh `make` reproduces every output.
+clean:
+	@find 2_process 3_output -type f ! -name '.gitkeep' -delete
+	@rm -f 1_code/code.pdf 1_code/code.tex 1_code/code.log 1_code/code.knit.md 4_drafts/*.pdf *.log
+	@echo "Cleaned 2_process, 3_output, and render artifacts."
+
+help:
+	@echo "Targets: all (default), r, stata, quarto, appendix, paper, slides, clean"
