@@ -4,6 +4,14 @@ rm(list = ls()); invisible(gc())
 # Use CRAN mirror (needed when running via Rscript / make)
 options(repos = c(CRAN = "https://cloud.r-project.org"))
 
+# Use a writable user library in Codespaces / restricted environments.
+lib_dir <- Sys.getenv("R_LIBS_USER")
+if (identical(lib_dir, "")) {
+  lib_dir <- file.path(Sys.getenv("HOME"), "R", "library")
+}
+if (!dir.exists(lib_dir)) dir.create(lib_dir, recursive = TRUE, showWarnings = FALSE)
+.libPaths(c(lib_dir, .libPaths()))
+
 # Move to the project root whether we start there or inside 1_code
 if (dir.exists(file.path(getwd(), "1_code"))) setwd(file.path(getwd(), "1_code"))
 setwd("..")
@@ -11,8 +19,8 @@ ROOT <- getwd()
 
 # Packages: sandwich gives heteroskedasticity-robust SE; everything else is base R
 need <- c("sandwich")
-to_install <- setdiff(need, rownames(installed.packages()))
-if (length(to_install)) install.packages(to_install)  # repos taken from options()
+to_install <- setdiff(need, rownames(installed.packages(lib.loc = lib_dir)))
+if (length(to_install)) install.packages(to_install, lib = lib_dir)  # repos taken from options()
 invisible(lapply(need, require, character.only = TRUE))
 
 # Paths (forward slashes work on every OS)
