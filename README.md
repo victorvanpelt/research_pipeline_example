@@ -10,30 +10,30 @@ The structure of this research pipeline is in line with the concept of the [TIER
 
 ```
 research_pipeline_example/
-├── 0_data/        raw inputs      (real raw data is NOT shared; see below)
+├── 0_data/                        raw inputs (real raw data is NOT shared)
 │   ├── gen_ai_earnings.csv        small synthetic dataset so the example runs
-│   └── codebook.md                what each variable means, where the data come from
-├── 1_code/        analysis code   (shared; the heart of the repo)
-│   ├── code.do      Stata
-│   ├── code.r       R
-│   └── code.qmd     Quarto (self-contained literate report)
-├── 2_process/     intermediate / passing data between steps (NOT shared)
-├── 3_output/      shared outputs: tables and figures
-│   ├── table_1.tex               written by the analysis, read by the drafts
-│   └── data_appendix/            stats and figures for the data appendix
-├── 4_drafts/      the documents; each .qmd renders to a committed .pdf
-│   ├── paper.qmd          the manuscript
-│   ├── presentation.qmd   the slides
-│   ├── data_appendix.qmd  the data appendix (describes the analysis data)
+│   └── codebook.md                what each variable means and its type
+├── 1_code/                        analysis code (shared; the heart of the repo)
+│   ├── code.do                    Stata
+│   ├── code.r                     R
+│   └── code.qmd                   Quarto version of the R code
+├── 2_process/                     intermediate / passing data between steps (NOT shared)
+├── 3_output/                      shared outputs: tables and figures
+│   ├── table_1.tex                written by the analysis, read by the drafts
+│   └── data_appendix/             stats and figures for the data appendix
+├── 4_drafts/                      the documents; each .qmd renders to a committed .pdf
+│   ├── paper.qmd             	   the manuscript
+│   ├── presentation.qmd   		   the slides
+│   ├── data_appendix.qmd		   the data appendix (describes the analysis data)
 │   ├── references.bib             bibliography for the drafts
 │   └── materials/                 beamer theme, logo, fonts for the slides
-├── makefile.mak     build tasks (the pipeline)
-├── Makefile         two-line wrapper including makefile.mak, so plain `make` works
-├── AGENTS.md        rules for AI coding agents working in this repo
-├── LICENSE          MIT license
-├── .gitignore       what is and is not version-controlled
-├── .gitattributes   normalizes line endings across operating systems
-└── README.md        this file
+├── makefile.mak                   build tasks (the pipeline)
+├── Makefile                       two-line wrapper including makefile.mak
+├── AGENTS.md                      rules for AI coding agents working in this repo
+├── LICENSE          		       MIT license
+├── .gitignore                     what is and is not version-controlled
+├── .gitattributes   			   normalizes line endings across operating systems
+└── README.md        			   this file
 ```
 
 The folders are numbered in the order data flow through them: `0_data → 1_code → 2_process → 3_output → 4_drafts`.
@@ -67,11 +67,12 @@ Other folders you might add as a project grows:
 
 `1_code` holds the *same* analysis written three ways. Use whichever fits your workflow; they produce matching results.
 
-| File | Language | What it does |
-|------|----------|--------------|
-| `code.do`  | Stata  | import → transform → regress (robust SE) → write `3_output/table_1.tex` via `esttab` |
-| `code.r`   | R      | same, in base R + `sandwich`; also saves intermediate data to `2_process` |
-| `code.qmd` | Quarto | a self-contained literate report that builds the table inline at render time |
+
+| File       | Language | What it does                                                                           |
+| ------------ | ---------- | ---------------------------------------------------------------------------------------- |
+| `code.do`  | Stata    | import → transform → regress (robust SE) → write`3_output/table_1.tex` via `esttab` |
+| `code.r`   | R        | same, in base R +`sandwich`; also saves intermediate data to `2_process`               |
+| `code.qmd` | Quarto   | a self-contained literate report that builds the table inline at render time           |
 
 The analysis itself is deliberately trivial: regress a scaled earnings measure on a generative-AI indicator, with heteroskedasticity-robust standard errors. The point is the plumbing, not the result.
 
@@ -100,17 +101,18 @@ This runs the R analysis, then renders the data appendix, the paper, and the sli
 
 ## Make targets
 
-| Command | Result |
-|---------|--------|
-| `make` (or `make all`) | run the R analysis, then render the data appendix, the paper, and the slides |
-| `make r`      | run the R analysis (`1_code/code.r`) |
-| `make stata`  | run the Stata analysis (`1_code/code.do`) |
-| `make quarto` | render the self-contained Quarto report (`1_code/code.qmd`) |
-| `make appendix` | render the data appendix (`4_drafts/data_appendix.qmd`) |
-| `make paper`  | render the paper (`4_drafts/paper.qmd`) |
-| `make slides` | render the slides (`4_drafts/presentation.qmd`) |
-| `make clean`  | delete everything the pipeline generates, so the next `make` reproduces it from scratch |
-| `make help`   | list the targets |
+
+| Command                | Result                                                                                 |
+| ------------------------ | ---------------------------------------------------------------------------------------- |
+| `make` (or `make all`) | run the R analysis, then render the data appendix, the paper, and the slides           |
+| `make r`               | run the R analysis (`1_code/code.r`)                                                   |
+| `make stata`           | run the Stata analysis (`1_code/code.do`)                                              |
+| `make quarto`          | render the self-contained Quarto report (`1_code/code.qmd`)                            |
+| `make appendix`        | render the data appendix (`4_drafts/data_appendix.qmd`)                                |
+| `make paper`           | render the paper (`4_drafts/paper.qmd`)                                                |
+| `make slides`          | render the slides (`4_drafts/presentation.qmd`)                                        |
+| `make clean`           | delete everything the pipeline generates, so the next`make` reproduces it from scratch |
+| `make help`            | list the targets                                                                       |
 
 `make` (with no target) runs everything in the right order. If you build a single document, run `make r` (or `make stata`) first, because the drafts read the files those steps write.
 
@@ -126,13 +128,14 @@ make paper  QUARTO=/opt/quarto/bin/quarto
 
 The `.gitignore` uses an *ignore-everything-then-allow* strategy: it ignores all files, then explicitly re-includes only what should be shared. This makes it easy to reason about what leaves your machine.
 
-| Folder | Shared in git? | Why |
-|--------|:--------------:|-----|
-| `0_data`    | the synthetic CSV and its codebook | **Real raw data should not be shared.** Drop your own data here; it stays ignored. The synthetic file is a teaching exception so the example runs. |
-| `1_code`    | yes | Code is the reproducible core of the project. |
-| `2_process` | no  | Intermediate files are large and disposable; they are regenerated by the code. |
-| `3_output`  | yes | Final tables and figures, so collaborators and readers can see results without rerunning. |
-| `4_drafts`  | sources, materials, and rendered PDFs | The `.qmd`/`.bib` sources plus the built PDFs; render intermediates (`.tex`, `.aux`, `_files/`) stay ignored. |
+
+| Folder      |            Shared in git?            | Why                                                                                                                                                |
+| ------------- | :-------------------------------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0_data`    |  the synthetic CSV and its codebook  | **Real raw data should not be shared.** Drop your own data here; it stays ignored. The synthetic file is a teaching exception so the example runs. |
+| `1_code`    |                  yes                  | Code is the reproducible core of the project.                                                                                                      |
+| `2_process` |                  no                  | Intermediate files are large and disposable; they are regenerated by the code.                                                                     |
+| `3_output`  |                  yes                  | Final tables and figures, so collaborators and readers can see results without rerunning.                                                          |
+| `4_drafts`  | sources, materials, and rendered PDFs | The`.qmd`/`.bib` sources plus the built PDFs; render intermediates (`.tex`, `.aux`, `_files/`) stay ignored.                                       |
 
 Each folder keeps a `.gitkeep` file so the (otherwise empty) folder still exists after a fresh clone.
 
