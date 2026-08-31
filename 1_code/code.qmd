@@ -1,5 +1,5 @@
 ---
-title: "Quarto Example: A Report Built at Render Time"
+title: "Quarto Example: Same Analysis as code.r and code.do"
 author: "Victor van Pelt"
 format:
   pdf:
@@ -10,6 +10,10 @@ format:
 
 ```{r}
 #| include: false
+
+# This engine runs the exact same analysis as code.r and code.do, and writes
+# the exact same files to 2_process and 3_output. It renders no report of its
+# own; make quarto deletes the leftover PDF after this runs.
 
 # Use CRAN mirror (needed when running via Rscript / make / quarto)
 options(repos = c(CRAN = "https://cloud.r-project.org"))
@@ -40,61 +44,127 @@ discover_root <- function(start_dir) {
 }
 
 ROOT <- discover_root(getwd())
-ensure_packages(c("sandwich", "tibble", "modelsummary", "rmarkdown", "knitr"))
+ensure_packages(c("sandwich", "rmarkdown", "knitr"))
 
-# One self-contained pipeline: import -> transform -> analyse (no other file needed)
-df <- read.csv(file.path(ROOT, "0_data", "gen_ai_earnings.csv"))
+# Paths, same layout as code.r
+path_csv   <- file.path(ROOT, "0_data",    "gen_ai_earnings.csv")
+path_proc  <- file.path(ROOT, "2_process", "gen_ai_earnings.rds")
+path_edit  <- file.path(ROOT, "2_process", "edit_gen_ai_earnings.rds")
+path_table <- file.path(ROOT, "3_output",  "table_1.tex")
+path_appx  <- file.path(ROOT, "3_output",  "data_appendix")
+
+dir.create(file.path(ROOT, "2_process"), showWarnings = FALSE, recursive = TRUE)
+dir.create(file.path(ROOT, "3_output"),  showWarnings = FALSE, recursive = TRUE)
+dir.create(path_appx, showWarnings = FALSE, recursive = TRUE)
+
+# 1. Import the raw CSV and store an untouched copy in 2_process
+df <- read.csv(path_csv)
+saveRDS(df, path_proc)
+
+# 2. Transform and save the edited data (kept separate from the raw copy)
 df$earnings_scaled <- df$earnings / 10
-df <- df[df$earnings_scaled >= 0, , drop = FALSE]
+df <- df[df$earnings_scaled >= 0, , drop = FALSE]   # drop the negative scaled earnings
+saveRDS(df, path_edit)
 
+# 3. Run the analysis
 mod <- lm(earnings_scaled ~ gen_ai, data = df)
 vc  <- sandwich::vcovHC(mod, type = "HC1")           # robust SE, matches Stata's ", r"
 ```
 
-## Table 1
-
 ```{r}
-#| echo: false
+#| include: false
 
-# Robust Wald F for the single slope, computed from the same robust vcov the
-# table uses. modelsummary's goodness-of-fit list for lm carries no F or p, so
-# these rows are added explicitly; without them the table would silently omit
-# both and stop matching the tables code.r and code.do write to 3_output.
-b_q  <- coef(mod)
-se_q <- sqrt(diag(vc))
-n_q  <- as.integer(nobs(mod))
-df_m <- length(b_q) - 1L  # model df (number of regressors)
-F_q  <- unname((b_q["gen_ai"] / se_q["gen_ai"])^2)
-p_q  <- pf(F_q, df_m, n_q - length(b_q), lower.tail = FALSE)
+# 4. Write a LaTeX table to 3_output that the paper and slides can \input.
+#    Same rows, same numbers, same order as code.r and code.do write, so all
+#    three engines produce an interchangeable table_1.tex.
+b    <- coef(mod)
+se   <- sqrt(diag(vc))
+tval <- b / se
+n    <- as.integer(nobs(mod))
+pval <- 2 * pt(-abs(tval), df = n - length(b))
+r2   <- summary(mod)$r.squared
+Fst  <- unname(tval["gen_ai"]^2)                    # robust Wald F for the single slope
+Fp   <- pf(Fst, 1, n - length(b), lower.tail = FALSE)
 
-f3 <- function(x) formatC(x, format = "f", digits = 3)
+stars <- function(p) if (p < .01) "***" else if (p < .05) "**" else if (p < .10) "*" else ""
+f3    <- function(x) formatC(x, format = "f", digits = 3)
 
-gof_map <- data.frame(
-  raw   = c("nobs", "r.squared"),
-  clean = c("Observations", "$R^2$"),
-  fmt   = c(0, 3)
+tex <- c(
+  "\\begin{table}[htbp]\\centering",
+  "\\caption{TABLE 1 - REGRESSIONS OF SCALED EARNINGS ON GENERATIVE AI}",
+  "\\begin{tabular}{lc}",
+  "\\toprule",
+  " & earnings\\_scaled \\\\",
+  "\\midrule",
+  sprintf("gen\\_ai & %s%s \\\\",   f3(b["gen_ai"]),       stars(pval["gen_ai"])),
+  sprintf(" & (%s) \\\\",           f3(se["gen_ai"])),
+  "\\addlinespace",
+  sprintf("Constant & %s%s \\\\",   f3(b["(Intercept)"]),  stars(pval["(Intercept)"])),
+  sprintf(" & (%s) \\\\",           f3(se["(Intercept)"])),
+  "\\midrule",
+  sprintf("Observations & %d \\\\", n),
+  sprintf("$R^2$ & %s \\\\",        f3(r2)),
+  sprintf("F & %s \\\\",            f3(Fst)),
+  sprintf("p-value & %s \\\\",      f3(Fp)),
+  "\\bottomrule",
+  "\\end{tabular}",
+  "\\par\\vspace{0.4em}",
+  "\\parbox{0.6\\textwidth}{\\footnotesize \\emph{Notes.} Robust standard errors in parentheses. $^{*}\\,p<0.10$, $^{**}\\,p<0.05$, $^{***}\\,p<0.01$.}",
+  "\\end{table}"
 )
+writeLines(tex, path_table)
 
-add_rows_tbl <- tibble::tibble(
-  term      = c("F", "p-value"),
-  `Model 1` = c(f3(F_q), f3(p_q))
-)
+# 5. Data appendix output: summary statistics and distribution figures for the
+#    analysis data, written to 3_output/data_appendix and assembled into a
+#    document by 4_drafts/data_appendix_example.qmd.
 
-# coef_map fixes the row order and renames the intercept, so this table lists
-# the same rows, in the same order, as the ones code.r and code.do write.
-# escape = FALSE lets the $R^2$ label reach LaTeX as maths.
-modelsummary::modelsummary(
-  list("Model 1" = mod),
-  vcov      = list(vc),
-  statistic = "({std.error})",
-  stars     = c("*" = .10, "**" = .05, "***" = .01),
-  coef_map  = c("gen_ai" = "gen\\_ai", "(Intercept)" = "Constant"),
-  gof_map   = gof_map,
-  add_rows  = add_rows_tbl,
-  escape    = FALSE,
-  fmt       = 3,
-  title     = "TABLE 1 - REGRESSIONS OF SCALED EARNINGS ON GENERATIVE AI",
-  notes     = "Robust standard errors in parentheses. * p < 0.10, ** p < 0.05, *** p < 0.01.",
-  output    = "latex"   # emit LaTeX into the slide; no .tex file created
-)
+# Summary statistics for the quantitative variables: N, mean, sd, min, p25,
+# median, p75, max. Same columns, in the same order, as the other two engines.
+sum_row <- function(x, name) {
+  qs <- quantile(x, c(.25, .50, .75), na.rm = TRUE)
+  sprintf("%s & %d & %s & %s & %s & %s & %s & %s & %s \\\\", name,
+          sum(!is.na(x)),
+          f3(mean(x, na.rm = TRUE)), f3(sd(x, na.rm = TRUE)),
+          f3(min(x, na.rm = TRUE)), f3(qs[1]), f3(qs[2]), f3(qs[3]),
+          f3(max(x, na.rm = TRUE)))
+}
+writeLines(c(
+  "\\begin{tabular}{lcccccccc}",
+  "\\toprule",
+  " & N & Mean & SD & Min & p25 & Median & p75 & Max \\\\",
+  "\\midrule",
+  sum_row(df$earnings,        "earnings"),
+  sum_row(df$earnings_scaled, "earnings\\_scaled"),
+  "\\bottomrule",
+  "\\end{tabular}"
+), file.path(path_appx, "summary_stats.tex"))
+
+# Frequency table for the categorical variable, with the Total row the other
+# two engines add.
+freq <- table(df$gen_ai)
+f1   <- function(x) formatC(x, format = "f", digits = 1)
+writeLines(c(
+  "\\begin{tabular}{lcc}",
+  "\\toprule",
+  " & Frequency & Percent \\\\",
+  "\\midrule",
+  sprintf("%s & %d & %s \\\\", names(freq), as.integer(freq),
+          f1(100 * as.integer(freq) / sum(freq))),
+  sprintf("Total & %d & %s \\\\", sum(freq), f1(100)),
+  "\\bottomrule",
+  "\\end{tabular}"
+), file.path(path_appx, "freq_gen_ai.tex"))
+
+# Distribution figures: histograms for the quantitative variables, a bar
+# chart for the categorical one.
+plot_png <- function(file, expr) {
+  png(file.path(path_appx, file), width = 1400, height = 1000, res = 200)
+  expr; dev.off()
+}
+plot_png("hist_earnings.png",
+         hist(df$earnings, main = NULL, xlab = "earnings", col = "grey80"))
+plot_png("hist_earnings_scaled.png",
+         hist(df$earnings_scaled, main = NULL, xlab = "earnings_scaled", col = "grey80"))
+plot_png("bar_gen_ai.png",
+         barplot(freq, xlab = "gen_ai", ylab = "Frequency", col = "grey80"))
 ```

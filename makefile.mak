@@ -6,8 +6,8 @@
 #    make r          run the R analysis           (1_code/code.r)
 #    make stata      run the Stata analysis       (1_code/code.do)
 #    make quarto     render the Quarto file       (1_code/code.qmd)
-#    make appendix   render the data appendix     (4_drafts/data_appendix_example.qmd)
-#    make paper      render the paper             (4_drafts/paper_example.qmd)
+#    make appendix   render the data appendix     (4_drafts/data_appendix.qmd)
+#    make paper      render the paper             (4_drafts/paper.qmd)
 #    make slides     render the slides            (4_drafts/presentation_example.qmd)
 #    make clean      delete everything the pipeline generates
 #    make help       list the targets
@@ -40,17 +40,17 @@ stata:
 	@rm -f code.log 1_code/code.log
 
 quarto:
-	@rm -f 1_code/code.tex 1_code/code.log 1_code/code.knit.md
+	@rm -f 1_code/code.tex 1_code/code.log 1_code/code.knit.md 1_code/code.pdf
 	$(QUARTO) render 1_code/code.qmd
-	@rm -f 1_code/code.tex 1_code/code.log 1_code/code.knit.md
+	@rm -f 1_code/code.tex 1_code/code.log 1_code/code.knit.md 1_code/code.pdf
 
 # --- Manuscript, slides, and data appendix (consume 2_process and 3_output)
 # Run `make r` (or `make stata`) first so the inputs they read exist.
 appendix:
-	$(QUARTO) render 4_drafts/data_appendix_example.qmd
+	$(QUARTO) render 4_drafts/data_appendix.qmd
 
 paper:
-	$(QUARTO) render 4_drafts/paper_example.qmd
+	$(QUARTO) render 4_drafts/paper.qmd
 
 slides:
 	$(QUARTO) render 4_drafts/presentation_example.qmd

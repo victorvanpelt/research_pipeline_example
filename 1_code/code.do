@@ -38,7 +38,7 @@ eststo clear
 
 //Write the data appendix output: summary statistics and distribution figures
 //for the analysis data, written to 3_output/data_appendix and assembled into
-//a document by 4_drafts/data_appendix_example.qmd.
+//a document by 4_drafts/data_appendix.qmd.
 capture mkdir "3_output/data_appendix"
 
 //summary statistics for the quantitative variables

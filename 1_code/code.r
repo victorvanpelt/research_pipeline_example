@@ -86,7 +86,7 @@ writeLines(tex, path_table)
 
 # 5. Data appendix output: summary statistics and distribution figures for the
 #    analysis data, written to 3_output/data_appendix and assembled into a
-#    document by 4_drafts/data_appendix_example.qmd.
+#    document by 4_drafts/data_appendix.qmd.
 path_appx <- file.path(ROOT, "3_output", "data_appendix")
 dir.create(path_appx, showWarnings = FALSE, recursive = TRUE)
 

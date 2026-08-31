@@ -22,9 +22,9 @@ research_pipeline_example/
 │   ├── table_1.tex               written by the analysis, read by the drafts
 │   └── data_appendix/            stats and figures for the data appendix
 ├── 4_drafts/      the documents; each .qmd renders to a committed .pdf
-│   ├── paper_example.qmd          the manuscript
+│   ├── paper.qmd          the manuscript
 │   ├── presentation_example.qmd   the slides
-│   ├── data_appendix_example.qmd  the data appendix (describes the analysis data)
+│   ├── data_appendix.qmd  the data appendix (describes the analysis data)
 │   ├── references.bib             bibliography for the drafts
 │   └── materials/                 beamer theme, logo, fonts for the slides
 ├── makefile.mak     build tasks (the pipeline)
@@ -58,9 +58,9 @@ Other folders you might add as a project grows:
         └──► 3_output/data_appendix/                    appendix stats + figures
                     │
                     ▼   (the drafts read from 2_process and 3_output)
-        ├──► 4_drafts/paper_example.qmd          ─► paper_example.pdf
+        ├──► 4_drafts/paper.qmd          ─► paper_example.pdf
         ├──► 4_drafts/presentation_example.qmd   ─► presentation_example.pdf
-        └──► 4_drafts/data_appendix_example.qmd  ─► data_appendix_example.pdf
+        └──► 4_drafts/data_appendix.qmd  ─► data_appendix_example.pdf
 ```
 
 ## The three analysis engines (pick one)
@@ -75,7 +75,7 @@ Other folders you might add as a project grows:
 
 The analysis itself is deliberately trivial: regress a scaled earnings measure on a generative-AI indicator, with heteroskedasticity-robust standard errors. The point is the plumbing, not the result.
 
-`code.r` and `code.do` also write the data appendix's statistics and figures to `3_output/data_appendix/`; `4_drafts/data_appendix_example.qmd` assembles them into a short document describing the analysis data variable by variable. `code.qmd` is self-contained and skips this step.
+`code.r` and `code.do` also write the data appendix's statistics and figures to `3_output/data_appendix/`; `4_drafts/data_appendix.qmd` assembles them into a short document describing the analysis data variable by variable. `code.qmd` is self-contained and skips this step.
 
 ## Quickstart
 
@@ -106,8 +106,8 @@ This runs the R analysis, then renders the data appendix, the paper, and the sli
 | `make r`      | run the R analysis (`1_code/code.r`) |
 | `make stata`  | run the Stata analysis (`1_code/code.do`) |
 | `make quarto` | render the self-contained Quarto report (`1_code/code.qmd`) |
-| `make appendix` | render the data appendix (`4_drafts/data_appendix_example.qmd`) |
-| `make paper`  | render the paper (`4_drafts/paper_example.qmd`) |
+| `make appendix` | render the data appendix (`4_drafts/data_appendix.qmd`) |
+| `make paper`  | render the paper (`4_drafts/paper.qmd`) |
 | `make slides` | render the slides (`4_drafts/presentation_example.qmd`) |
 | `make clean`  | delete everything the pipeline generates, so the next `make` reproduces it from scratch |
 | `make help`   | list the targets |
