@@ -23,7 +23,7 @@ research_pipeline_example/
 │   └── data_appendix/            stats and figures for the data appendix
 ├── 4_drafts/      the documents; each .qmd renders to a committed .pdf
 │   ├── paper.qmd          the manuscript
-│   ├── presentation_example.qmd   the slides
+│   ├── presentation.qmd   the slides
 │   ├── data_appendix.qmd  the data appendix (describes the analysis data)
 │   ├── references.bib             bibliography for the drafts
 │   └── materials/                 beamer theme, logo, fonts for the slides
@@ -59,7 +59,7 @@ Other folders you might add as a project grows:
                     │
                     ▼   (the drafts read from 2_process and 3_output)
         ├──► 4_drafts/paper.qmd          ─► paper_example.pdf
-        ├──► 4_drafts/presentation_example.qmd   ─► presentation_example.pdf
+        ├──► 4_drafts/presentation.qmd   ─► presentation_example.pdf
         └──► 4_drafts/data_appendix.qmd  ─► data_appendix_example.pdf
 ```
 
@@ -108,7 +108,7 @@ This runs the R analysis, then renders the data appendix, the paper, and the sli
 | `make quarto` | render the self-contained Quarto report (`1_code/code.qmd`) |
 | `make appendix` | render the data appendix (`4_drafts/data_appendix.qmd`) |
 | `make paper`  | render the paper (`4_drafts/paper.qmd`) |
-| `make slides` | render the slides (`4_drafts/presentation_example.qmd`) |
+| `make slides` | render the slides (`4_drafts/presentation.qmd`) |
 | `make clean`  | delete everything the pipeline generates, so the next `make` reproduces it from scratch |
 | `make help`   | list the targets |
 

@@ -8,7 +8,7 @@
 #    make quarto     render the Quarto file       (1_code/code.qmd)
 #    make appendix   render the data appendix     (4_drafts/data_appendix.qmd)
 #    make paper      render the paper             (4_drafts/paper.qmd)
-#    make slides     render the slides            (4_drafts/presentation_example.qmd)
+#    make slides     render the slides            (4_drafts/presentation.qmd)
 #    make clean      delete everything the pipeline generates
 #    make help       list the targets
 #
@@ -53,7 +53,7 @@ paper:
 	$(QUARTO) render 4_drafts/paper.qmd
 
 slides:
-	$(QUARTO) render 4_drafts/presentation_example.qmd
+	$(QUARTO) render 4_drafts/presentation.qmd
 
 # --- Housekeeping --------------------------------------------------------
 # Delete everything in 2_process and 3_output except the .gitkeep files,
