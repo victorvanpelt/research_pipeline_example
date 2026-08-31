@@ -116,7 +116,7 @@ writeLines(tex, path_table)
 
 # 5. Data appendix output: summary statistics and distribution figures for the
 #    analysis data, written to 3_output/data_appendix and assembled into a
-#    document by 4_drafts/data_appendix_example.qmd.
+#    document by 4_drafts/data_appendix.qmd.
 
 # Summary statistics for the quantitative variables: N, mean, sd, min, p25,
 # median, p75, max. Same columns, in the same order, as the other two engines.

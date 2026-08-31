@@ -57,9 +57,9 @@ Other folders you might add as a project grows:
         └──► 3_output/data_appendix/                    appendix stats + figures
                     │
                     ▼   (the drafts read from 2_process and 3_output)
-        ├──► 4_drafts/paper.qmd          ─► paper_example.pdf
-        ├──► 4_drafts/presentation.qmd   ─► presentation_example.pdf
-        └──► 4_drafts/data_appendix.qmd  ─► data_appendix_example.pdf
+        ├──► 4_drafts/paper.qmd          ─► paper.pdf
+        ├──► 4_drafts/presentation.qmd   ─► presentation.pdf
+        └──► 4_drafts/data_appendix.qmd  ─► data_appendix.pdf
 ```
 
 ## The three analysis engines (pick one)
@@ -75,7 +75,7 @@ Other folders you might add as a project grows:
 
 The analysis itself is deliberately trivial: regress a scaled earnings measure on a generative-AI indicator, with heteroskedasticity-robust standard errors. The point is the plumbing, not the result.
 
-`code.r` and `code.do` also write the data appendix's statistics and figures to `3_output/data_appendix/`; `4_drafts/data_appendix.qmd` assembles them into a short document describing the analysis data variable by variable. `code.qmd` is self-contained and skips this step.
+All three engines write the data appendix's statistics and figures to `3_output/data_appendix/`; `4_drafts/data_appendix.qmd` assembles them into a short document describing the analysis data variable by variable.
 
 ## Quickstart
 
