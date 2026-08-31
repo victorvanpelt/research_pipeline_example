@@ -44,10 +44,7 @@ header-includes:
 ---
 
 ```{r setup, include=FALSE}
-# This chunk reads a number computed by the pipeline so the text updates
-# automatically when the data change. It reads the *processed* data from
-# 2_process, so run the pipeline first (e.g. `make all` or `make r`).
-# It accepts either the R (.rds) or the Stata (.dta) output.
+# This chunk reads a number computed by the pipeline so the text updates automatically when the data change. It reads the *processed* data from 2_process, so run the pipeline first (e.g. `make all` or `make r`). It accepts either the R (.rds) or the Stata (.dta) output.
 proc_rds <- "../2_process/edit_gen_ai_earnings.rds"
 proc_dta <- "../2_process/edit_gen_ai_earnings.dta"
 
@@ -61,7 +58,7 @@ if (file.exists(proc_rds)) {
   stop("No processed data found. Run the pipeline first (e.g. `make all`).")
 }
 
-# Dynamic figure reused in the text below
+# Dynamic sample size number used in the text below
 sample_size <- nrow(data)
 ```
 

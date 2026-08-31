@@ -31,7 +31,7 @@ eststo: regress earnings_scaled gen_ai, r
 esttab using "3_output/table_1.tex", replace booktabs ///
 b(3) se(3) star(* 0.10 ** 0.05 *** 0.01) ///
 stats(N r2 F p, fmt(0 3 3 3) labels("Observations" "\$R^2\$" "F" "p-value")) ///
-nonumbers coeflabels(_cons Constant) ///
+nonumbers coeflabels(_cons Constant) varwidth(12) modelwidth(10) ///
 title(TABLE 1 - REGRESSIONS OF SCALED EARNINGS ON GENERATIVE AI) ///
 nonotes addnotes("Robust standard errors in parentheses. * p<0.10, ** p<0.05, *** p<0.01.")
 eststo clear
