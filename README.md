@@ -1,10 +1,10 @@
 # Research Pipeline Example
 
-A working template for a reproducible and dynamic research project: raw data go in, one command runs the analysis and builds the paper and the slides, and every number and table in those documents is pulled straight from the code. Nothing is copied by hand, so nothing goes stale, and everything is reproducible. The pipeline is also dynamic: `make` rebuilds everything in the right order, from raw data to finished PDF, and the paper and slides are written in [Quarto](https://quarto.org), so they read results from the analysis instead of hard-coding them. Edit the code, run `make`, and every number, table, and document updates together. No copy-paste, no mismatched numbers.
+A template for a reproducible research project: raw data go in, one command runs the analysis and builds the paper and the slides, and every number and table in those documents comes from the code. `make` rebuilds everything in the right order, from raw data to finished PDF, and the drafts are written in [Quarto](https://quarto.org), so they read results from the analysis rather than hard-coding them. Edit the code, run `make`, and every number, table, and document updates together; nothing is copied by hand, so nothing goes stale.
 
-This pipeline is meant as a starting point for empirical research projects. The example uses Stata, R, and Quarto, but the structure works with any coding language.
+The pipeline is a starting point for empirical research projects. The example uses Stata, R, and Quarto, but the structure works with any language.
 
-The structure of this research pipeline is in line with the concept of the [TIER Protocol](https://www.projecttier.org/tier-protocol/protocol-4-0/), a widely used standard for documenting reproducible research.
+The folder structure follows the [TIER Protocol](https://www.projecttier.org/tier-protocol/protocol-4-0/), a widely used standard for documenting reproducible research.
 
 ## Repository structure
 
@@ -43,39 +43,37 @@ Other folders you might add as a project grows:
 - `#_slides` if you want to separate talks from paper drafts,
 - `#_docs` for notes, memos, or referee correspondence.
 
-## How the pieces connect
+## Workflow
 
 ```
-0_data/gen_ai_earnings.csv   (documented in 0_data/codebook.md)
+0_data/gen_ai_earnings.csv   (in 0_data/codebook.md)
         │
         ▼
-1_code  (run ONE engine: code.r | code.do; code.qmd is self-contained ─► 1_code/code.pdf)
+1_code  (run ONE engine: code.r | code.do | code.qmd)
         │
-        ├──► 2_process/gen_ai_earnings.(rds|dta)        untouched raw copy
+        ├──► 2_process/gen_ai_earnings.(rds|dta)        copy of raw data
         ├──► 2_process/edit_gen_ai_earnings.(rds|dta)   edited analysis data
         ├──► 3_output/table_1.tex                       shared table
         └──► 3_output/data_appendix/                    appendix stats + figures
                     │
-                    ▼   (the drafts read from 2_process and 3_output)
+                    ▼   (files read from 2_process and 3_output)
         ├──► 4_drafts/paper.qmd          ─► paper.pdf
         ├──► 4_drafts/presentation.qmd   ─► presentation.pdf
         └──► 4_drafts/data_appendix.qmd  ─► data_appendix.pdf
 ```
 
-## The three analysis engines (pick one)
+## Three analysis engines
 
-`1_code` holds the *same* analysis written three ways. Use whichever fits your workflow; they produce matching results.
+`1_code` holds the same analysis written three ways. All three produce matching results, so use whichever fits your workflow.
 
 
 | File       | Language | What it does                                                                           |
 | ------------ | ---------- | ---------------------------------------------------------------------------------------- |
-| `code.do`  | Stata    | import → transform → regress (robust SE) → write`3_output/table_1.tex` via `esttab` |
+| `code.do`  | Stata    | import → transform → regress (robust SE) → write`3_output/table_1.tex` via `esttab`    |
 | `code.r`   | R        | same, in base R +`sandwich`; also saves intermediate data to `2_process`               |
-| `code.qmd` | Quarto   | a self-contained literate report that builds the table inline at render time           |
+| `code.qmd` | Quarto   | a self-contained report that builds the table inline                                   |
 
-The analysis itself is deliberately trivial: regress a scaled earnings measure on a generative-AI indicator, with heteroskedasticity-robust standard errors. The point is the plumbing, not the result.
-
-All three engines write the data appendix's statistics and figures to `3_output/data_appendix/`; `4_drafts/data_appendix.qmd` assembles them into a short document describing the analysis data variable by variable.
+The analysis itself is deliberately trivial: regress a scaled earnings measure on a generative-AI indicator, with heteroskedasticity-robust standard errors. All three engines write the data appendix's statistics and figures to `3_output/data_appendix/`; `4_drafts/data_appendix.qmd` assembles them into a short document describing the analysis data variable by variable.
 
 ## Quickstart
 
@@ -96,7 +94,7 @@ The synthetic dataset is already in `0_data`, so the example runs immediately.
 make
 ```
 
-This runs the R analysis, then renders the data appendix, the paper, and the slides. Open the results in `4_drafts/`. (The build logic lives in the `Makefile` at the repo root.)
+This runs the R analysis and then renders the data appendix, the paper, and the slides. Open the results in `4_drafts/`. The build logic is in the `Makefile` at the repo root.
 
 ## Make targets
 
@@ -115,7 +113,7 @@ This runs the R analysis, then renders the data appendix, the paper, and the sli
 
 `make` (with no target) runs everything in the right order. If you build a single document, run `make r` (or `make stata`) first, because the drafts read the files those steps write.
 
-The tool locations are overridable if they are not on your `PATH`:
+If a tool is not on your `PATH`, point `make` to it:
 
 ```bash
 make r      RSCRIPT=/usr/local/bin/Rscript
@@ -147,9 +145,11 @@ Each folder keeps a `.gitkeep` file so the (otherwise empty) folder still exists
 
 ## AI coding agents
 
-This repository does not ship any tooling for AI agents or agentic systems because every person tends to have their own solution and setup and the technology is evolving rapidly. Instead, `AGENTS.md` states the rules AI coding agents must follow in this repository. Most agentic coding tools read it automatically. Two widely used ones do not yet, Claude Code and Gemini CLI. If you use either, run one command once in this folder to point it at the file: `echo '@AGENTS.md' > CLAUDE.md` for Claude Code, or `echo '@./AGENTS.md' > GEMINI.md` for Gemini CLI. These pointer files stay on your machine because `.gitignore` already excludes them, so the repository keeps shipping only `AGENTS.md`. The rules protect the pipeline's discipline and ensure AI only helps users code within the boundaries and rules of the research pipeline. So, raw data in `0_data` are read-only (the hand-maintained `0_data/codebook.md` is the one exception), files in `2_process` and `3_output` are build artifacts only the code may write, and agents never do research processes directly, never commit, and never push. In this way, every change stays in the working tree for the user to review. A change counts as done only when `make clean` followed by `make` rebuilds every output without errors.
+This repository ships no tooling for AI agents, because setups differ across users and the technology changes quickly. Instead, `AGENTS.md` states the rules AI coding agents must follow in this repository. Most agentic coding tools read it automatically; Claude Code and Gemini CLI do not yet. If you use either, run one command once in this folder to point it at the file: `echo '@AGENTS.md' > CLAUDE.md` for Claude Code, or `echo '@./AGENTS.md' > GEMINI.md` for Gemini CLI. The pointer files stay on your machine because `.gitignore` excludes them, so the repository ships only `AGENTS.md`.
 
-Since every number in the drafts is generated by the pipeline, you check an agent's work by rerunning the pipeline and reading the diff, not by proofreading the paper. The two commands that keep you in charge are `make` and `git diff`.
+The rules keep AI within the pipeline's discipline: raw data in `0_data` are read-only (the hand-maintained `0_data/codebook.md` is the one exception), files in `2_process` and `3_output` are build artifacts only the code may write, and agents never perform research tasks themselves, never commit, and never push. Every change therefore stays in the working tree for you to review. A change counts as done only when `make clean` followed by `make` rebuilds every output without errors.
+
+Because every number in the drafts is generated by the pipeline, you check an agent's work by rerunning the pipeline and reading the diff, not by proofreading the paper. The two commands that keep you in charge are `make` and `git diff`.
 
 **Try it.** Open your coding agent in this folder and ask it to winsorize `earnings_scaled` at the 1st and 99th percentiles in whichever engine you use. It should state a short plan, edit `1_code/`, rerun the pipeline, and report the rebuild. Then rerun it yourself with `make clean && make`, read `git diff` (code and tables diff line by line; figures and rebuilt PDFs show as binary changes), and decide what to commit.
 
