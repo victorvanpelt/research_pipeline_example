@@ -1,10 +1,10 @@
 # Research Pipeline Example
 
-A template for a reproducible research project: raw data go in, one command runs the analysis and builds the paper and the slides, and every number and table in those documents comes from the code. `make` rebuilds everything in the right order, from raw data to finished PDF, and the drafts are written in [Quarto](https://quarto.org), so they read results from the analysis rather than hard-coding them. Edit the code, run `make`, and every number, table, and document updates together; nothing is copied by hand, so nothing goes stale.
+A template for a reproducible research project: raw data go in, one command runs the analysis and builds the paper and the slides, and every number and table in those documents come from the code. `make` rebuilds everything in the right order, from raw data to finished PDF, and the drafts are written in [Quarto](https://quarto.org), so they read results from the analysis rather than hard-coding them. Edit the code, run `make`, and every number, table, and document updates together; nothing is copied by hand, so nothing goes stale.
 
 The pipeline is a starting point for empirical research projects. The example uses Stata, R, and Quarto, but the structure works with any language.
 
-The folder structure follows the [TIER Protocol](https://www.projecttier.org/tier-protocol/protocol-4-0/), a widely used standard for documenting reproducible research.
+The folder structure follows the [TIER Protocol](https://www.projecttier.org/tier-protocol/protocol-4-0/), a standard for documenting reproducible research.
 
 ## Repository structure
 
