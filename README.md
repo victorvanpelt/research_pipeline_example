@@ -29,6 +29,8 @@ research_pipeline_example/
 │   └── materials/                 beamer theme, logo, fonts for the slides
 ├── Makefile                       build tasks (the pipeline)
 ├── AGENTS.md                      rules for AI coding agents working in this repo
+├── CLAUDE.md                      one-line pointer so Claude Code loads AGENTS.md
+├── GEMINI.md                      one-line pointer so Gemini CLI loads AGENTS.md
 ├── LICENSE          		       MIT license
 ├── .gitignore                     what is and is not version-controlled
 ├── .gitattributes   			   normalizes line endings across operating systems
@@ -145,7 +147,7 @@ Each folder keeps a `.gitkeep` file so the (otherwise empty) folder still exists
 
 ## AI coding agents
 
-This repository ships no tooling for AI agents, because setups differ across users and the technology changes quickly. Instead, `AGENTS.md` states the rules AI coding agents must follow in this repository. Most agentic coding tools read it automatically; Claude Code and Gemini CLI do not yet. If you use either, run one command once in this folder to point it at the file: `echo '@AGENTS.md' > CLAUDE.md` for Claude Code, or `echo '@./AGENTS.md' > GEMINI.md` for Gemini CLI. The pointer files stay on your machine because `.gitignore` excludes them, so the repository ships only `AGENTS.md`.
+This repository ships no tooling for AI agents, because setups differ across users and the technology changes quickly. Instead, `AGENTS.md` states the rules AI coding agents must follow in this repository. Most agentic coding tools read it automatically. Claude Code and Gemini CLI do not: they read only `CLAUDE.md` and `GEMINI.md`. The repository therefore ships both as one-line pointer files (`@AGENTS.md`) that load `AGENTS.md` at session start, so every agent follows the same rules with no setup on your side. Keep the rules in `AGENTS.md`; do not add rules to the pointer files.
 
 The rules keep AI within the pipeline's discipline: raw data in `0_data` are read-only (the hand-maintained `0_data/codebook.md` is the one exception), files in `2_process` and `3_output` are build artifacts only the code may write, and agents never perform research tasks themselves, never commit, and never push. Every change therefore stays in the working tree for you to review. A change counts as done only when `make clean` followed by `make` rebuilds every output without errors.
 

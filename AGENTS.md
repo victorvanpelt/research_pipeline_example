@@ -11,6 +11,7 @@ This repository is a template for a reproducible research pipeline. Data flows t
 - Never run `git commit` or `git push`. Leave changes in the working tree for the maintainer to review and commit.
 - Do not commit credentials; use environment variables.
 - Remove any scratch or helper files you create in this repository after you're finished. The folder structure is fixed; do not add folders or top-level files.
+- `CLAUDE.md` and `GEMINI.md` are read-only pointer files that load this file; never write to them, not even through a memory shortcut. Anything an agent must remember about this repository goes in this file, `AGENTS.md`, and only when the maintainer asks for it.
 
 ## Build
 
